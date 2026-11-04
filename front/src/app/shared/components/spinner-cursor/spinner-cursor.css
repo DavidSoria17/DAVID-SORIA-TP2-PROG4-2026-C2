@@ -1,0 +1,19 @@
+/* Abajo a la derecha de la punta del cursor, donde no tapa lo que se señala. */
+:host {
+  position: fixed;
+  top: var(--espacio-4);
+  left: var(--espacio-4);
+  display: none;
+  pointer-events: none;
+  z-index: var(--capa-cursor);
+}
+
+:host(.visible) {
+  display: block;
+}
+
+@media (hover: none), (pointer: coarse) {
+  :host(.visible) {
+    display: none;
+  }
+}

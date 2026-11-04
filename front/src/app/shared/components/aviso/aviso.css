@@ -1,0 +1,73 @@
+:host {
+  --aviso-color: var(--color-info);
+  --aviso-fondo: var(--color-info-fondo);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: start;
+  gap: var(--espacio-3);
+  padding: var(--espacio-3);
+  background: var(--color-ventana);
+  border: var(--borde-ventana);
+  border-left: 8px solid var(--aviso-color);
+  box-shadow: var(--sombra-aviso);
+}
+
+:host(.aviso--exito) {
+  --aviso-color: var(--color-exito);
+  --aviso-fondo: var(--color-exito-fondo);
+}
+
+:host(.aviso--peligro) {
+  --aviso-color: var(--color-peligro);
+  --aviso-fondo: var(--color-peligro-fondo);
+}
+
+:host(.aviso--alerta) {
+  --aviso-color: var(--color-aviso);
+  --aviso-fondo: var(--color-aviso-fondo);
+}
+
+.icono {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  color: var(--aviso-color);
+  background: var(--aviso-fondo);
+  border: var(--borde-fino) solid var(--aviso-color);
+}
+
+.titulo {
+  margin: 0;
+  font-family: var(--fuente-sistema);
+  font-size: var(--texto-sm);
+  color: var(--aviso-color);
+}
+
+.texto {
+  margin: 2px 0 0;
+  font-size: var(--texto-sm);
+}
+
+.tiempo {
+  height: 4px;
+  margin-top: var(--espacio-2);
+  background: var(--aviso-fondo);
+  border: var(--borde-fino) solid var(--aviso-color);
+}
+
+.tiempo i {
+  display: block;
+  height: 100%;
+  background: var(--aviso-color);
+  animation: tiempo-restante linear forwards;
+}
+
+@keyframes tiempo-restante {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0;
+  }
+}

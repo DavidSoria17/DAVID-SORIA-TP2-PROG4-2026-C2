@@ -1,0 +1,86 @@
+:host {
+  display: block;
+  scroll-margin-top: var(--espacio-4);
+}
+
+.barra-herramientas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-3);
+  margin-bottom: var(--espacio-4);
+  padding-bottom: var(--espacio-3);
+  border-bottom: var(--borde-separador);
+}
+
+/* ---------- Selector de orden: botones segmentados con radios ---------- */
+
+.selector-orden {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  font-family: var(--fuente-sistema);
+  font-size: var(--texto-xs);
+}
+
+.selector-orden__opciones {
+  display: inline-flex;
+  background: var(--color-ventana);
+  border: var(--borde-control);
+  box-shadow: var(--sombra-boton);
+}
+
+.selector-orden__opcion {
+  position: relative;
+}
+
+.selector-orden__opcion input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.selector-orden__opcion span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-1);
+  height: 30px;
+  padding: 0 var(--espacio-3);
+  font-size: var(--texto-sm);
+  color: var(--color-texto);
+  background: var(--color-secundario);
+  border-left: var(--borde-fino) solid var(--color-borde);
+}
+
+.selector-orden__opcion:first-child span {
+  border-left: 0;
+}
+
+.selector-orden__opcion:hover span {
+  background: var(--color-secundario-hover);
+}
+
+.selector-orden__opcion input:checked + span {
+  color: var(--color-texto-sobre-acento);
+  background: var(--color-acento);
+  box-shadow: var(--bisel-hundido);
+}
+
+.selector-orden__opcion input:focus-visible + span {
+  outline: var(--ancho-foco) var(--estilo-foco) var(--color-foco);
+  outline-offset: -5px;
+}
+
+@container escritorio (max-width: 640px) {
+  .barra-herramientas {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .barra-herramientas .boton {
+    width: 100%;
+  }
+}

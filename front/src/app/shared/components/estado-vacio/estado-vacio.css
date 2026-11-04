@@ -1,0 +1,22 @@
+:host {
+  display: grid;
+  justify-items: center;
+  gap: var(--espacio-3);
+  padding: var(--espacio-8) var(--espacio-4);
+  text-align: center;
+  background: var(--color-ventana-alterna);
+  border: var(--borde-grueso) dashed var(--color-borde-suave);
+}
+
+.titulo {
+  margin: 0;
+  font-family: var(--fuente-sistema);
+  font-size: var(--texto-lg);
+}
+
+.texto {
+  margin: 0;
+  max-width: 34ch;
+  font-size: var(--texto-sm);
+  color: var(--color-texto-secundario);
+}

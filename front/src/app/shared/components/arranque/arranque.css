@@ -1,0 +1,76 @@
+:host {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: var(--espacio-6);
+  padding: var(--espacio-8) var(--espacio-4);
+  font-family: var(--fuente-mono);
+  color: var(--color-texto-arranque);
+  background: var(--color-fondo-arranque);
+  overflow: hidden;
+  z-index: var(--capa-arranque);
+}
+
+/* Líneas de CRT. */
+:host::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--trama-lineas-escaneo);
+  pointer-events: none;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-3);
+  font-family: var(--fuente-sistema-titulo);
+  font-size: var(--texto-3xl);
+  line-height: 1;
+  text-shadow: var(--sombra-texto-titulo);
+}
+
+.version {
+  font-family: var(--fuente-sistema);
+  font-size: var(--texto-xs);
+  opacity: 0.85;
+}
+
+.registro {
+  width: min(440px, 100%);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--texto-md);
+  line-height: 1.5;
+}
+
+.registro b {
+  font-weight: inherit;
+  color: var(--color-texto-arranque-ok);
+}
+
+.progreso {
+  width: min(440px, 100%);
+  color: var(--color-texto-arranque);
+}
+
+.progreso__pista {
+  background: var(--color-fondo-arranque);
+  border-color: var(--color-texto-arranque);
+  box-shadow: none;
+}
+
+.progreso__relleno {
+  background: repeating-linear-gradient(
+    90deg,
+    var(--color-texto-arranque-ok) 0 10px,
+    transparent 10px 12px
+  );
+}
+
+.progreso__datos {
+  color: var(--color-texto-arranque);
+}

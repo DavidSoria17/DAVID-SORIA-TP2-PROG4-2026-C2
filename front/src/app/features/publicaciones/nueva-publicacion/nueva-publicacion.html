@@ -1,0 +1,51 @@
+<h1 class="solo-lectores">Nueva publicación</h1>
+@if (usuario()) {
+  <form class="pila" [formGroup]="formulario" (ngSubmit)="publicar()">
+    @if (errorServidor(); as mensaje) {
+      <app-aviso
+        tipo="peligro"
+        titulo="No pudimos publicar"
+        [texto]="mensaje"
+        (cerrar)="errorServidor.set(null)"
+      />
+    }
+
+    <app-campo-formulario etiqueta="Título" para="publicacion-titulo">
+      <input
+        class="control"
+        id="publicacion-titulo"
+        type="text"
+        [maxLength]="largoMaximoTitulo"
+        formControlName="titulo"
+      />
+    </app-campo-formulario>
+
+    <app-campo-formulario etiqueta="Mensaje" para="publicacion-mensaje">
+      <textarea
+        class="control"
+        id="publicacion-mensaje"
+        rows="6"
+        [maxLength]="largoMaximoMensaje"
+        formControlName="mensaje"
+      ></textarea>
+      <span class="contador" aria-live="polite">
+        {{ formulario.controls.mensaje.value.length }}/{{ largoMaximoMensaje }}
+      </span>
+    </app-campo-formulario>
+
+    <app-campo-formulario etiqueta="Imagen" para="publicacion-imagen" [opcional]="true">
+      <app-campo-imagen idControl="publicacion-imagen" formControlName="imagen" />
+    </app-campo-formulario>
+
+    <div class="acciones">
+      <button class="boton" type="button" (click)="volver()">Cancelar</button>
+      <button class="boton boton--primario" type="submit" [disabled]="enviando()">
+        {{ enviando() ? 'Publicando…' : 'Publicar' }}
+      </button>
+    </div>
+  </form>
+} @else {
+  <app-estado-vacio titulo="No iniciaste sesión" texto="Entrá con tu cuenta para publicar.">
+    <a class="boton boton--primario" routerLink="/login">Iniciar sesión</a>
+  </app-estado-vacio>
+}

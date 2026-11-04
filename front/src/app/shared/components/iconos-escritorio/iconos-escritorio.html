@@ -1,0 +1,47 @@
+<ul class="lista" aria-label="Aplicaciones del escritorio">
+  @for (icono of iconos(); track icono.app.id) {
+    <li
+      class="lugar"
+      [class.arrastrado]="arrastre()?.id === icono.app.id"
+      [style.left.px]="icono.celda ? icono.celda.columna * celda : null"
+      [style.top.px]="icono.celda ? icono.celda.fila * celda : null"
+      [style.transform]="desplazamientoDe(icono.app.id)"
+    >
+      <button
+        class="app"
+        type="button"
+        aria-haspopup="menu"
+        [attr.aria-expanded]="menu()?.app?.id === icono.app.id"
+        [attr.data-app]="icono.app.id"
+        [attr.data-papelera]="icono.app.esPapelera ? '' : null"
+        [class.seleccionada]="seleccionado() === icono.app.id"
+        [appArrastrable]="movibles()"
+        (arrastre)="desplazar(icono.app, $event)"
+        (soltar)="soltar(icono, $event)"
+        (click)="alTocar(icono.app, $event)"
+        (dblclick)="elegir(icono.app, 'abrir')"
+        (contextmenu)="alPedirMenu(icono.app, $event)"
+        (pointerdown)="alPresionar(icono.app, $event)"
+        (pointerup)="cancelarPresion()"
+        (pointercancel)="cancelarPresion()"
+        (keydown)="alTeclear(icono.app, $event)"
+      >
+        <app-icono-app [nombre]="icono.app.icono" [prioridad]="true" />
+        <span class="etiqueta">{{ icono.app.etiqueta }}</span>
+      </button>
+    </li>
+  }
+</ul>
+
+@if (menu(); as abierto) {
+  <app-menu
+    class="menu"
+    [style.left.px]="movibles() ? abierto.posicion.x : null"
+    [style.top.px]="movibles() ? abierto.posicion.y : null"
+    [titulo]="abierto.app.archivo"
+    [opciones]="opcionesDe(abierto.app)"
+    [etiqueta]="'Opciones de ' + abierto.app.etiqueta"
+    (elegir)="elegir(abierto.app, $event)"
+    (cerrar)="cerrarMenu(true)"
+  />
+}

@@ -1,0 +1,38 @@
+<nav class="paginador" aria-label="Paginación">
+  @if (totalPaginas() > 1) {
+    <button
+      class="item"
+      type="button"
+      aria-label="Página anterior"
+      [disabled]="pagina() === 1"
+      (click)="cambiar.emit(pagina() - 1)"
+    >
+      <app-icono nombre="anterior" />
+    </button>
+    @for (numero of paginas(); track $index) {
+      @if (numero === null) {
+        <span class="puntos" aria-hidden="true">…</span>
+      } @else {
+        <button
+          class="item"
+          type="button"
+          [attr.aria-label]="'Página ' + numero"
+          [attr.aria-current]="numero === pagina() ? 'page' : null"
+          (click)="cambiar.emit(numero)"
+        >
+          {{ numero }}
+        </button>
+      }
+    }
+    <button
+      class="item"
+      type="button"
+      aria-label="Página siguiente"
+      [disabled]="pagina() === totalPaginas()"
+      (click)="cambiar.emit(pagina() + 1)"
+    >
+      <app-icono nombre="siguiente" />
+    </button>
+  }
+  <span class="resumen">{{ resumen() }}</span>
+</nav>

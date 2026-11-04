@@ -1,0 +1,16 @@
+.confirmacion {
+  justify-items: center;
+  text-align: center;
+}
+
+.titulo {
+  margin-bottom: var(--espacio-1);
+  font-size: var(--texto-lg);
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--espacio-3);
+}

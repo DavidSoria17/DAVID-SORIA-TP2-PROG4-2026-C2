@@ -1,0 +1,46 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-1);
+  min-width: 0;
+}
+
+.etiqueta {
+  font-family: var(--fuente-sistema);
+  font-size: var(--texto-sm);
+  letter-spacing: var(--espaciado-letras-sistema);
+  color: var(--color-texto);
+}
+
+.etiqueta--error {
+  color: var(--color-peligro);
+}
+
+.opcional {
+  font-size: var(--texto-xs);
+  color: var(--color-texto-secundario);
+}
+
+.ayuda {
+  font-family: var(--fuente-sistema);
+  font-size: var(--texto-xs);
+  color: var(--color-texto-secundario);
+}
+
+.error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--espacio-2);
+  margin: 0;
+  padding: var(--espacio-1) var(--espacio-2);
+  font-family: var(--fuente-sistema);
+  font-size: var(--texto-xs);
+  line-height: var(--interlineado-normal);
+  color: var(--color-peligro);
+  background: var(--color-peligro-fondo);
+  border-left: var(--borde-grueso) solid var(--color-peligro);
+}
+
+.error app-icono {
+  margin-top: 3px;
+}

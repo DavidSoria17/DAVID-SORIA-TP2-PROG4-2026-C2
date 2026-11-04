@@ -1,0 +1,16 @@
+<label class="etiqueta" [class.etiqueta--error]="mensajeError()" [for]="para()">
+  {{ etiqueta() }}
+  @if (opcional()) {
+    <span class="opcional">(opcional)</span>
+  }
+</label>
+<ng-content />
+@if (ayuda(); as texto) {
+  <span class="ayuda" [id]="idAyuda()">{{ texto }}</span>
+}
+@if (mensajeError(); as mensaje) {
+  <p class="error" [id]="idError()">
+    <app-icono nombre="error" [escala]="1" />
+    <span>{{ mensaje }}</span>
+  </p>
+}

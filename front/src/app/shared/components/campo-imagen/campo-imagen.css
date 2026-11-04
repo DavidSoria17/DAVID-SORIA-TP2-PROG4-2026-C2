@@ -1,0 +1,64 @@
+:host {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: var(--espacio-3);
+  align-items: center;
+}
+
+.previa {
+  display: grid;
+  place-items: center;
+  width: 96px;
+  height: 96px;
+  overflow: hidden;
+  color: var(--color-texto-secundario);
+  background: var(--color-ventana-alterna) var(--trama-avatar);
+  border: var(--borde-control);
+  box-shadow: var(--bisel-hundido);
+}
+
+/* Con una foto elegida, el recuadro toma la proporción de la foto para mostrarla entera. */
+.previa:has(img) {
+  height: auto;
+}
+
+.previa img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.acciones {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--espacio-2);
+  min-width: 0;
+}
+
+input:focus-visible + .boton {
+  outline: var(--ancho-foco) var(--estilo-foco) var(--color-foco);
+  outline-offset: var(--separacion-foco);
+}
+
+input[aria-invalid='true'] ~ .detalle {
+  color: var(--color-peligro);
+}
+
+.detalle {
+  font-family: var(--fuente-sistema);
+  font-size: var(--texto-xs);
+  color: var(--color-texto-secundario);
+  overflow-wrap: anywhere;
+}
+
+@container escritorio (max-width: 640px) {
+  :host {
+    grid-template-columns: 72px 1fr;
+  }
+
+  .previa {
+    width: 72px;
+    height: 72px;
+  }
+}

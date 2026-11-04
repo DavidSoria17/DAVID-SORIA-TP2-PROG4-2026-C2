@@ -1,0 +1,6 @@
+<ng-content select="[icono]" />
+<p class="titulo">{{ titulo() }}</p>
+@if (texto(); as contenido) {
+  <p class="texto">{{ contenido }}</p>
+}
+<ng-content />

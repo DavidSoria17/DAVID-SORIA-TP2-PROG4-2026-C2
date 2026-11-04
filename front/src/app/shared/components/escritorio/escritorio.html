@@ -1,0 +1,54 @@
+<main class="area">
+  <ng-content />
+</main>
+<nav class="barra-tareas" aria-label="Barra de tareas">
+  <button
+    class="inicio"
+    type="button"
+    aria-label="Start"
+    aria-haspopup="menu"
+    [attr.aria-expanded]="menuAbierto()"
+    (click)="alternarMenu()"
+  >
+    <img
+      class="inicio__logo"
+      ngSrc="iconos/apps/logo.png"
+      width="20"
+      height="16"
+      alt=""
+      draggable="false"
+    />
+    <span class="inicio__nombre">Start</span>
+  </button>
+  @if (menuAbierto()) {
+    <app-menu
+      class="menu-inicio"
+      franja="Windose 20"
+      etiqueta="Menú Windose 20"
+      [opciones]="opcionesInicio"
+      (elegir)="elegirOpcion()"
+      (cerrar)="cerrarMenu(true)"
+    />
+  }
+  <span class="separador" aria-hidden="true"></span>
+  <div class="tareas">
+    @for (tarea of tareas(); track tarea.ruta) {
+      <button
+        class="tarea"
+        type="button"
+        [class.tarea--activa]="visible() === tarea.ruta"
+        [attr.aria-pressed]="visible() === tarea.ruta"
+        [attr.aria-label]="
+          (visible() === tarea.ruta ? 'Minimizar ' : 'Mostrar ') + tarea.config.titulo
+        "
+        (click)="elegirTarea.emit(tarea.ruta)"
+      >
+        <span class="tarea__icono" aria-hidden="true"></span>
+        <span class="tarea__etiqueta">{{ tarea.config.titulo }}</span>
+      </button>
+    }
+  </div>
+  <div class="bandeja">
+    <time [attr.datetime]="ahora().toISOString()">{{ ahora() | date: 'HH:mm' }}</time>
+  </div>
+</nav>

@@ -1,0 +1,93 @@
+:host {
+  position: absolute;
+  inset: var(--espacio-6);
+  z-index: var(--capa-iconos-escritorio);
+  pointer-events: none;
+}
+
+.lista {
+  position: relative;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lugar {
+  position: absolute;
+  width: 88px;
+  pointer-events: auto;
+}
+
+.arrastrado {
+  z-index: var(--capa-menu);
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--espacio-1);
+  width: 100%;
+  padding: var(--espacio-1);
+  font-family: var(--fuente-sistema);
+  font-size: var(--texto-xs);
+  color: var(--color-texto-escritorio);
+  background: none;
+  border: var(--borde-fino) solid transparent;
+  cursor: pointer;
+  -webkit-touch-callout: none;
+}
+
+:host(:not(.fijos)) .app {
+  touch-action: none;
+}
+
+.etiqueta {
+  max-width: 100%;
+  padding: 0 var(--espacio-1);
+  overflow-wrap: anywhere;
+}
+
+/* Como en Windows: el mismo recuadro celeste translúcido al pasar el mouse,
+   al seleccionar y al arrastrar. La etiqueta no cambia nunca. */
+.app:hover,
+.seleccionada {
+  background: var(--color-icono-hover-fondo);
+  border-color: var(--color-icono-hover-borde);
+}
+
+.app:focus-visible {
+  outline-color: var(--color-foco-escritorio);
+}
+
+.menu {
+  position: absolute;
+  pointer-events: auto;
+}
+
+/* Celular: grilla fija, sin arrastre; el menú aparece abajo, a lo ancho. */
+:host(.fijos) {
+  position: static;
+  inset: auto;
+  pointer-events: auto;
+}
+
+:host(.fijos) .lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+  gap: var(--espacio-3);
+  height: auto;
+}
+
+:host(.fijos) .lugar {
+  position: relative;
+  width: auto;
+}
+
+:host(.fijos) .menu {
+  left: var(--espacio-2);
+  right: var(--espacio-2);
+  bottom: var(--espacio-2);
+  min-width: 0;
+}

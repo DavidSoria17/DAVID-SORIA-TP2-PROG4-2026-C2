@@ -1,0 +1,97 @@
+<h1 class="solo-lectores">Papelera</h1>
+<div class="barra-comandos" role="toolbar" aria-label="Acciones de la papelera">
+  <button
+    class="boton boton--chico"
+    type="button"
+    aria-label="Restaurar"
+    [disabled]="!seleccionada()"
+    (click)="restaurar()"
+  >
+    <app-icono nombre="restaurar" [escala]="1" />
+    <span>Restaurar</span>
+  </button>
+  <button
+    class="boton boton--peligro boton--chico"
+    type="button"
+    aria-label="Eliminar definitivamente"
+    [disabled]="!seleccionada()"
+    (click)="porEliminar.set('seleccionada')"
+  >
+    <app-icono nombre="basura" [escala]="1" />
+    <span>Eliminar definitivamente</span>
+  </button>
+  <span class="barra-comandos__separador" aria-hidden="true"></span>
+  <button
+    class="boton boton--chico"
+    type="button"
+    aria-label="Vaciar papelera"
+    [disabled]="filas().length === 0"
+    (click)="porEliminar.set('todas')"
+  >
+    <app-icono nombre="prohibido" [escala]="1" />
+    <span>Vaciar papelera</span>
+  </button>
+</div>
+
+<div class="cuerpo">
+  @if (filas().length === 0) {
+    <app-estado-vacio titulo="La papelera está vacía">
+      <app-icono-app icono nombre="papelera" />
+    </app-estado-vacio>
+  } @else {
+    <div class="tabla-contenedor">
+      <table class="tabla" aria-label="Apps en la papelera">
+        <thead>
+          <tr>
+            <th scope="col">Nombre</th>
+            <th scope="col">Estaba en</th>
+            <th scope="col">Borrado</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (fila of filas(); track fila.app.id) {
+            <tr
+              tabindex="0"
+              [attr.aria-selected]="seleccionada()?.id === fila.app.id"
+              (click)="seleccionar(fila.app.id)"
+              (keydown.enter)="seleccionar(fila.app.id)"
+              (keydown.space)="$event.preventDefault(); seleccionar(fila.app.id)"
+              (keydown)="alTeclear(fila.app.id, $event)"
+            >
+              <td>
+                <span class="archivo">
+                  <app-icono-app [nombre]="fila.app.icono" [escala]="1" />
+                  {{ fila.app.etiqueta }}
+                </span>
+              </td>
+              <td class="dato" data-etiqueta="Estaba en">Escritorio</td>
+              <td class="dato" data-etiqueta="Borrado">{{ fila.borrada }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+
+<footer class="estado">
+  <span>{{ cantidad() }}</span>
+  @if (seleccionada(); as app) {
+    <span>1 seleccionado: {{ app.etiqueta }}</span>
+  }
+</footer>
+
+@if (porEliminar()) {
+  <app-modal
+    tituloVentana="atención"
+    tipo="alerta"
+    encabezado="¿Estás seguro que desea eliminar estos archivos de forma permanente?"
+    (cerrar)="porEliminar.set(null)"
+  >
+    <button class="boton" type="button" autofocus (click)="porEliminar.set(null)">Cancelar</button>
+    <button class="boton boton--peligro" type="button" (click)="eliminar()">
+      <app-icono nombre="basura" [escala]="1" />
+      Eliminar
+    </button>
+  </app-modal>
+}

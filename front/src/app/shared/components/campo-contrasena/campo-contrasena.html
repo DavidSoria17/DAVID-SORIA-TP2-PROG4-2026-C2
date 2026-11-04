@@ -1,0 +1,35 @@
+<div class="con-accion">
+  <input
+    #entrada
+    class="control"
+    [id]="idControl()"
+    [type]="visible() ? 'text' : 'password'"
+    [autocomplete]="autocompletar()"
+    [value]="valor()"
+    [disabled]="deshabilitado()"
+    (input)="escribir(entrada.value)"
+    (blur)="tocar()"
+  />
+  <button
+    class="accion"
+    type="button"
+    [attr.aria-label]="visible() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+    [attr.aria-pressed]="visible()"
+    (click)="visible.set(!visible())"
+  >
+    <app-icono nombre="ojo" />
+  </button>
+</div>
+@if (mostrarRequisitos()) {
+  <ul class="requisitos" aria-label="Requisitos de la contraseña">
+    @for (requisito of requisitos(); track requisito.descripcion) {
+      <li [class.cumple]="requisito.cumple">
+        <app-icono [nombre]="requisito.cumple ? 'ok' : 'error'" [escala]="1" />
+        <span>
+          {{ requisito.descripcion }}
+          <span class="solo-lectores">: {{ requisito.cumple ? 'cumple' : 'falta' }}</span>
+        </span>
+      </li>
+    }
+  </ul>
+}

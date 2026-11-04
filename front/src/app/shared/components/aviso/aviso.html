@@ -1,0 +1,22 @@
+<span class="icono">
+  <app-icono [nombre]="icono()" />
+</span>
+<div>
+  <p class="titulo">{{ titulo() }}</p>
+  @if (texto(); as contenido) {
+    <p class="texto">{{ contenido }}</p>
+  }
+  @if (duracion(); as milisegundos) {
+    <div class="tiempo" aria-hidden="true">
+      <i [style.animation-duration.ms]="milisegundos"></i>
+    </div>
+  }
+</div>
+<button
+  class="control-ventana control-ventana--cerrar"
+  type="button"
+  aria-label="Cerrar aviso"
+  (click)="cerrar.emit()"
+>
+  <app-icono nombre="cerrar" [escala]="1" />
+</button>

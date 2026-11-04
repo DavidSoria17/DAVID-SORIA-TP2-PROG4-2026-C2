@@ -1,0 +1,83 @@
+@if (usuario(); as perfil) {
+  <div class="perfil">
+    <section class="pila datos-personales" aria-labelledby="perfil-nombre">
+      <app-avatar
+        tamano="xl"
+        [nombreUsuario]="perfil.nombreUsuario"
+        [urlImagen]="perfil.urlImagen"
+      />
+      <div>
+        <h1 class="titulo-seccion nombre" id="perfil-nombre">
+          {{ perfil.nombre }} {{ perfil.apellido }}
+        </h1>
+        <p class="texto-secundario">{{ '@' + perfil.nombreUsuario }}</p>
+      </div>
+      @if (perfil.descripcion) {
+        <p class="descripcion">{{ perfil.descripcion }}</p>
+      }
+      <dl class="datos">
+        <dt>Correo</dt>
+        <dd>{{ perfil.correo }}</dd>
+        <dt>Nacimiento</dt>
+        <dd>
+          <time [attr.datetime]="perfil.fechaNacimiento">
+            {{ perfil.fechaNacimiento | date: 'dd/MM/yyyy' : 'UTC' }}
+          </time>
+        </dd>
+        <dt>Miembro</dt>
+        <dd>desde {{ perfil.createdAt | date: "MMMM 'de' y" }}</dd>
+        @if (totalPublicaciones() !== null) {
+          <dt>Publicó</dt>
+          <dd>{{ totalPublicaciones() }} {{ totalPublicaciones() === 1 ? 'vez' : 'veces' }}</dd>
+        }
+      </dl>
+    </section>
+
+    <section class="pila" aria-labelledby="perfil-ultimas">
+      <h2 class="titulo-seccion" id="perfil-ultimas">
+        Últimas {{ cantidadMostrada }} publicaciones
+      </h2>
+
+      @if (error(); as mensaje) {
+        <app-aviso
+          tipo="peligro"
+          titulo="No pudimos cargar tu perfil"
+          [texto]="mensaje"
+          (cerrar)="error.set(null)"
+        />
+      }
+
+      @for (publicacion of publicaciones(); track publicacion._id) {
+        <app-publicacion-card
+          [publicacion]="publicacion"
+          [propia]="true"
+          [eliminable]="true"
+          [compacta]="true"
+          (alternarMeGusta)="alternarMeGusta(publicacion)"
+          (eliminar)="eliminar(publicacion)"
+        >
+          @if (comentarios()[publicacion._id]; as lista) {
+            @if (lista.length > 0) {
+              <ul class="comentarios" aria-label="Comentarios">
+                @for (comentario of lista; track comentario._id) {
+                  <app-comentario [comentario]="comentario" />
+                }
+              </ul>
+            }
+          }
+        </app-publicacion-card>
+      } @empty {
+        @if (totalPublicaciones() === 0) {
+          <app-estado-vacio titulo="Todavía no publicaste nada">
+            <a class="boton boton--primario" routerLink="/publicaciones">Ir a Tweeter</a>
+          </app-estado-vacio>
+        }
+      }
+    </section>
+  </div>
+} @else {
+  <h1 class="solo-lectores">Mi perfil</h1>
+  <app-estado-vacio titulo="No iniciaste sesión" texto="Entrá con tu cuenta para ver tu perfil.">
+    <a class="boton boton--primario" routerLink="/login">Iniciar sesión</a>
+  </app-estado-vacio>
+}

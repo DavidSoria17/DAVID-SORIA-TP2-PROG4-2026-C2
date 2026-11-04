@@ -1,0 +1,22 @@
+<dialog #dialogo [attr.aria-label]="encabezado()" (cancel)="alCancelar($event)">
+  <app-ventana
+    [titulo]="tituloVentana()"
+    ancho="440px"
+    [cerrable]="cerrable()"
+    (cerrar)="cerrar.emit()"
+  >
+    <div class="contenido" [class.contenido--peligro]="tipo() === 'peligro'">
+      <app-icono class="icono" [nombre]="icono()" [escala]="2" />
+      <div>
+        <p class="encabezado">{{ encabezado() }}</p>
+        @if (texto(); as detalle) {
+          <p class="texto">{{ detalle }}</p>
+        }
+        <ng-content select="[detalle]" />
+      </div>
+      <div class="acciones">
+        <ng-content />
+      </div>
+    </div>
+  </app-ventana>
+</dialog>

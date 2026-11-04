@@ -1,0 +1,32 @@
+@if (franja(); as nombre) {
+  <div class="franja" aria-hidden="true">{{ nombre }}</div>
+}
+<ul class="lista" role="menu" [attr.aria-label]="etiqueta()">
+  @if (titulo(); as texto) {
+    <li class="titulo" role="presentation">{{ texto }}</li>
+  }
+  @for (opcion of opciones(); track opcion.id) {
+    @if (opcion.separada) {
+      <li class="separador" role="separator"></li>
+    }
+    <li role="none">
+      <button
+        class="opcion"
+        type="button"
+        role="menuitem"
+        [class.opcion--peligro]="opcion.peligro"
+        (click)="elegir.emit(opcion.id)"
+      >
+        <span class="opcion__icono">
+          @if (opcion.icono; as icono) {
+            <app-icono [nombre]="icono" [escala]="1" />
+          }
+        </span>
+        <span class="opcion__texto">{{ opcion.etiqueta }}</span>
+        @if (opcion.atajo; as atajo) {
+          <span class="opcion__atajo">{{ atajo }}</span>
+        }
+      </button>
+    </li>
+  }
+</ul>

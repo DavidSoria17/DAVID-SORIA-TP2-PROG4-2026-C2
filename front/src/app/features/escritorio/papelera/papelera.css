@@ -1,0 +1,64 @@
+/* La papelera arma su propio marco: barra de comandos, cuerpo y barra de estado. */
+:host {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.barra-comandos,
+.cuerpo,
+.estado {
+  margin-top: 2px;
+}
+
+.cuerpo {
+  flex: 1;
+  min-height: 0;
+  padding: var(--espacio-4);
+  overflow: auto;
+  background: var(--color-ventana);
+  border: var(--borde-fino) solid var(--color-borde);
+}
+
+.estado {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--espacio-2);
+  padding: 2px var(--espacio-2);
+  font-family: var(--fuente-sistema);
+  font-size: var(--texto-2xs);
+  color: var(--color-texto-secundario);
+  background: var(--color-ventana-alterna);
+  border: var(--borde-fino) solid var(--color-borde);
+}
+
+.tabla tbody tr {
+  cursor: pointer;
+}
+
+.archivo {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  min-width: 160px;
+  font-family: var(--fuente-sistema);
+}
+
+.dato {
+  font-family: var(--fuente-sistema);
+}
+
+@container escritorio (max-width: 640px) {
+  .cuerpo {
+    padding: var(--espacio-3);
+  }
+
+  .barra-comandos .boton {
+    padding: 0 var(--espacio-2);
+  }
+
+  .barra-comandos .boton span {
+    display: none;
+  }
+}

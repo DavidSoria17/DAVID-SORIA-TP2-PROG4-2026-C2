@@ -1,0 +1,33 @@
+<div class="logo">
+  <app-icono [nombre]="icono()" [escala]="6" />
+  <span>{{ titulo() }}</span>
+</div>
+<span class="version">{{ subtitulo() }}</span>
+<ul class="registro">
+  @for (linea of lineas(); track $index) {
+    <li>
+      @if (linea.lista) {
+        <b>[ OK ]</b>
+      } @else {
+        <span>[ .. ]</span>
+      }
+      {{ linea.texto }}
+    </li>
+  }
+</ul>
+<div class="progreso">
+  <div class="progreso__datos">
+    <span>{{ etiquetaProgreso() }}</span>
+    <span>{{ progreso() }} %</span>
+  </div>
+  <div
+    class="progreso__pista"
+    role="progressbar"
+    aria-valuemin="0"
+    aria-valuemax="100"
+    [attr.aria-label]="etiquetaProgreso()"
+    [attr.aria-valuenow]="progreso()"
+  >
+    <div class="progreso__relleno" [style.--valor.%]="progreso()"></div>
+  </div>
+</div>

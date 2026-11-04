@@ -1,0 +1,21 @@
+@let datos = comentario();
+<app-avatar
+  tamano="chico"
+  [nombreUsuario]="datos.autor.nombreUsuario"
+  [urlImagen]="datos.autor.urlImagen"
+/>
+<div>
+  <div class="cabecera">
+    <span class="autor">{{ '@' + datos.autor.nombreUsuario }}</span>
+    <time class="fecha" [attr.datetime]="datos.createdAt">
+      {{ datos.createdAt | tiempoRelativo }}
+    </time>
+    @if (datos.modificado) {
+      <span class="editado">
+        <app-icono nombre="lapiz" [escala]="1" />
+        editado
+      </span>
+    }
+  </div>
+  <p class="texto">{{ datos.mensaje }}</p>
+</div>

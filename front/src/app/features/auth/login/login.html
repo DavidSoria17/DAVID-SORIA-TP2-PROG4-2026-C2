@@ -1,0 +1,41 @@
+<form class="pila" [formGroup]="formulario" (ngSubmit)="iniciarSesion()">
+  <div class="saludo">
+    <img class="saludo__logo" ngSrc="iconos/apps/logo.png" width="48" height="39" alt="" />
+    <div>
+      <h1 class="titulo-seccion saludo__titulo">Hola de nuevo</h1>
+      <p class="saludo__texto">Entrá para ver qué anda pasando.</p>
+    </div>
+  </div>
+
+  @if (errorServidor(); as mensaje) {
+    <app-aviso
+      tipo="peligro"
+      titulo="No pudimos iniciar sesión"
+      [texto]="mensaje"
+      (cerrar)="errorServidor.set(null)"
+    />
+  }
+
+  <app-campo-formulario etiqueta="Correo o nombre de usuario" para="login-usuario">
+    <input
+      class="control"
+      id="login-usuario"
+      type="text"
+      autocomplete="username"
+      formControlName="usuario"
+    />
+  </app-campo-formulario>
+
+  <app-campo-formulario etiqueta="Contraseña" para="login-contrasena">
+    <app-campo-contrasena idControl="login-contrasena" formControlName="contrasena" />
+  </app-campo-formulario>
+
+  <button class="boton boton--primario boton--ancho" type="submit" [disabled]="enviando()">
+    {{ enviando() ? 'Entrando…' : 'Entrar' }}
+  </button>
+
+  <p class="pie">
+    ¿Primera vez por acá?
+    <a class="enlace" routerLink="/registro">Creá tu cuenta</a>
+  </p>
+</form>

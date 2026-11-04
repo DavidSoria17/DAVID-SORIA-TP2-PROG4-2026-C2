@@ -1,0 +1,124 @@
+<form class="pila" [formGroup]="formulario" (ngSubmit)="registrar()">
+  <h1 class="titulo-seccion titulo">Crear una cuenta</h1>
+
+  @if (errorServidor(); as mensaje) {
+    <app-aviso
+      tipo="peligro"
+      titulo="No pudimos crear la cuenta"
+      [texto]="mensaje"
+      (cerrar)="errorServidor.set(null)"
+    />
+  }
+
+  <div class="grilla">
+    <app-campo-formulario etiqueta="Nombre" para="registro-nombre">
+      <input
+        class="control"
+        id="registro-nombre"
+        type="text"
+        autocomplete="given-name"
+        formControlName="nombre"
+      />
+    </app-campo-formulario>
+
+    <app-campo-formulario etiqueta="Apellido" para="registro-apellido">
+      <input
+        class="control"
+        id="registro-apellido"
+        type="text"
+        autocomplete="family-name"
+        formControlName="apellido"
+      />
+    </app-campo-formulario>
+
+    <app-campo-formulario etiqueta="Correo electrónico" para="registro-correo">
+      <input
+        class="control"
+        id="registro-correo"
+        type="email"
+        autocomplete="email"
+        formControlName="correo"
+      />
+    </app-campo-formulario>
+
+    <app-campo-formulario
+      etiqueta="Nombre de usuario"
+      para="registro-usuario"
+      ayuda="Así te van a encontrar: letras, números, punto y guion bajo."
+    >
+      <input
+        class="control"
+        id="registro-usuario"
+        type="text"
+        autocomplete="username"
+        formControlName="nombreUsuario"
+      />
+    </app-campo-formulario>
+
+    <app-campo-formulario etiqueta="Contraseña" para="registro-contrasena">
+      <app-campo-contrasena
+        idControl="registro-contrasena"
+        autocompletar="new-password"
+        [mostrarRequisitos]="true"
+        formControlName="contrasena"
+      />
+    </app-campo-formulario>
+
+    <app-campo-formulario
+      etiqueta="Repetir contraseña"
+      para="registro-repetir"
+      errorDelGrupo="coincidencia"
+    >
+      <app-campo-contrasena
+        idControl="registro-repetir"
+        autocompletar="new-password"
+        formControlName="repetirContrasena"
+      />
+    </app-campo-formulario>
+
+    <app-campo-formulario etiqueta="Fecha de nacimiento" para="registro-nacimiento">
+      <input
+        class="control"
+        id="registro-nacimiento"
+        type="text"
+        placeholder="DD/MM/AAAA"
+        autocomplete="bday"
+        appFechaMask
+        formControlName="fechaNacimiento"
+      />
+    </app-campo-formulario>
+
+    <app-campo-formulario
+      etiqueta="Descripción breve"
+      para="registro-descripcion"
+      [opcional]="true"
+    >
+      <textarea
+        class="control"
+        id="registro-descripcion"
+        rows="3"
+        [maxLength]="largoMaximoDescripcion"
+        formControlName="descripcion"
+      ></textarea>
+      <span class="contador" aria-live="polite">
+        {{ formulario.controls.descripcion.value.length }}/{{ largoMaximoDescripcion }}
+      </span>
+    </app-campo-formulario>
+
+    <app-campo-formulario
+      class="ocupa-todo"
+      etiqueta="Imagen de perfil"
+      para="registro-imagen"
+      [opcional]="true"
+    >
+      <app-campo-imagen idControl="registro-imagen" formControlName="imagen" />
+    </app-campo-formulario>
+  </div>
+
+  <div class="acciones">
+    <a class="enlace" routerLink="/login">Ya tengo cuenta</a>
+    <button class="boton boton--primario" type="submit" [disabled]="enviando()">
+      {{ enviando() ? 'Creando cuenta…' : 'Crear cuenta' }}
+    </button>
+  </div>
+</form>

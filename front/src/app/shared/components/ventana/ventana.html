@@ -1,0 +1,68 @@
+<header
+  class="barra"
+  [appArrastrable]="movible() && !maximizada()"
+  (arrastre)="mover($event)"
+  (soltar)="soltar($event)"
+  (dblclick)="alternarMaximizada()"
+>
+  <span class="icono-ventana" aria-hidden="true"></span>
+  <h2 class="titulo" [id]="idTitulo">{{ titulo() }}</h2>
+  @if (cargando()) {
+    <app-spinner class="cargando" etiqueta="Esperando al servidor" />
+  }
+  <div class="controles" data-sin-arrastre>
+    @if (minimizable()) {
+      <button
+        class="control-ventana"
+        type="button"
+        aria-label="Minimizar"
+        (click)="minimizar.emit()"
+      >
+        <app-icono nombre="minimizar" [escala]="1" />
+      </button>
+    }
+    @if (maximizable()) {
+      <button
+        class="control-ventana"
+        type="button"
+        [attr.aria-label]="maximizada() ? 'Restaurar tamaño' : 'Maximizar'"
+        [attr.aria-pressed]="maximizada()"
+        (click)="alternarMaximizada()"
+      >
+        <app-icono nombre="maximizar" [escala]="1" />
+      </button>
+    }
+    @if (cerrable()) {
+      <button
+        class="control-ventana control-ventana--cerrar"
+        type="button"
+        aria-label="Cerrar"
+        (click)="cerrar.emit()"
+      >
+        <app-icono nombre="cerrar" [escala]="1" />
+      </button>
+    }
+  </div>
+</header>
+<div class="cuerpo">
+  <ng-content />
+</div>
+@if (estado().length > 0) {
+  <footer class="estado">
+    @for (texto of estado(); track $index) {
+      <span>{{ texto }}</span>
+    }
+  </footer>
+}
+<div class="pie" aria-hidden="true"></div>
+@if (redimensionable()) {
+  @for (borde of bordes; track borde.clase) {
+    <span
+      [class]="'borde borde--' + borde.clase"
+      aria-hidden="true"
+      [appArrastrable]="true"
+      (arrastre)="redimensionar(borde, $event)"
+      (soltar)="terminarRedimension()"
+    ></span>
+  }
+}

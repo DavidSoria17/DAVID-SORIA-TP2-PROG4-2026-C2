@@ -1,0 +1,39 @@
+:host {
+  --tam: 24px;
+  display: inline-block;
+  flex: none;
+  width: var(--tam);
+  height: var(--tam);
+}
+
+:host(.grande) {
+  --tam: 48px;
+}
+
+.giro {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background:
+    linear-gradient(var(--color-progreso) 0 0) 50% 0 / 25% 25% no-repeat,
+    linear-gradient(var(--color-progreso) 0 0) 100% 50% / 25% 25% no-repeat,
+    linear-gradient(var(--color-progreso-alterno) 0 0) 50% 100% / 25% 25% no-repeat,
+    linear-gradient(var(--color-progreso-alterno) 0 0) 0 50% / 25% 25% no-repeat,
+    linear-gradient(var(--color-borde-suave) 0 0) 15% 15% / 25% 25% no-repeat,
+    linear-gradient(var(--color-borde-suave) 0 0) 85% 15% / 25% 25% no-repeat,
+    linear-gradient(var(--color-borde-suave) 0 0) 85% 85% / 25% 25% no-repeat,
+    linear-gradient(var(--color-borde-suave) 0 0) 15% 85% / 25% 25% no-repeat;
+  animation: girar-pixel 0.8s steps(8) infinite;
+}
+
+@keyframes girar-pixel {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .giro {
+    animation-duration: 4s;
+  }
+}

@@ -1,0 +1,47 @@
+<app-escritorio
+  [tareas]="ventanasService.abiertas()"
+  [visible]="visible()?.ruta ?? null"
+  (reiniciar)="rebootService.iniciar()"
+  (elegirTarea)="elegirTarea($event)"
+>
+  @if (mostrarIconos()) {
+    <app-iconos-escritorio
+      [iconos]="escritorioService.iconos()"
+      [movibles]="!esCelular()"
+      (abrir)="abrir($event.ruta)"
+      (tirar)="tirar($event)"
+      (mover)="escritorioService.moverIcono($event.app, $event.celda)"
+      (medir)="escritorioService.actualizarGrilla($event)"
+    />
+  }
+
+  <app-ventana
+    [oculta]="visible() === null"
+    [clave]="ventanasService.activa() ?? ''"
+    [titulo]="configActiva()?.titulo ?? ''"
+    [ancho]="configActiva()?.ancho ?? 'auto'"
+    [estado]="configActiva()?.estado ?? []"
+    [secciones]="configActiva()?.secciones ?? false"
+    [movible]="!esCelular()"
+    [minimizable]="true"
+    [maximizable]="!esCelular()"
+    [cerrable]="true"
+    [cargando]="cargandoVentana()"
+    (minimizar)="ventanasService.minimizar()"
+    (cerrar)="cerrarVentana()"
+    (soltarEnPapelera)="tirarVentanaActiva()"
+  >
+    <router-outlet />
+  </app-ventana>
+</app-escritorio>
+
+@if (rebootService.reiniciando()) {
+  <app-arranque
+    titulo="Reboot"
+    icono="reiniciar"
+    subtitulo="Windose 20 · volviendo a la copia anterior del escritorio"
+    [lineas]="rebootService.lineas()"
+    [etiquetaProgreso]="rebootService.etiquetaProgreso()"
+    [progreso]="rebootService.progreso()"
+  />
+}

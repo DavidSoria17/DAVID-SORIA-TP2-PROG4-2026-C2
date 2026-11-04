@@ -1,0 +1,244 @@
+:host {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background-color: var(--color-fondo-escritorio);
+  background-image: var(--trama-escritorio);
+  background-size: var(--trama-escritorio-tamano);
+  image-rendering: pixelated;
+  container: escritorio / inline-size;
+  overflow-x: clip;
+}
+
+/* Pantalla rota: el impacto está en la esquina superior derecha y las grietas
+   avanzan hacia el centro. Queda detrás de íconos y ventanas; cada tanto las
+   líneas de color parpadean y se corren un pixel, como un monitor dañado. */
+:host::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: var(--ancho-ruptura);
+  background-image: var(--trama-ruptura);
+  background-repeat: no-repeat;
+  background-position: right top;
+  background-size: cover;
+  image-rendering: pixelated;
+  pointer-events: none;
+  z-index: var(--capa-escritorio);
+  animation: pantalla-rota 4.8s steps(1) infinite;
+}
+
+/* Líneas de CRT sobre todo el escritorio. */
+:host::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--trama-lineas-escaneo);
+  pointer-events: none;
+  z-index: var(--capa-escritorio);
+}
+
+@keyframes pantalla-rota {
+  0%,
+  100% {
+    transform: none;
+    filter: none;
+  }
+  22% {
+    transform: translateX(-2px);
+    filter: hue-rotate(70deg);
+  }
+  23% {
+    transform: none;
+    filter: none;
+  }
+  61% {
+    filter: hue-rotate(-90deg) brightness(1.3);
+  }
+  62% {
+    filter: none;
+  }
+  63% {
+    transform: translateY(2px);
+  }
+  64% {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host::before {
+    animation: none;
+  }
+}
+
+/* En computadora íconos y ventana se ubican con posición absoluta sobre el área. */
+.area {
+  position: relative;
+  flex: 1;
+  display: flex;
+  z-index: var(--capa-ventana);
+}
+
+/* ---------- Barra de tareas ---------- */
+
+.barra-tareas {
+  position: sticky;
+  bottom: 0;
+  order: var(--orden-barra-tareas);
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-1);
+  height: var(--alto-barra-tareas);
+  padding: 0 var(--espacio-1);
+  font-family: var(--fuente-sistema);
+  font-size: var(--texto-xs);
+  color: var(--color-texto-barra-tareas);
+  background: var(--color-barra-tareas);
+  border-top: var(--borde-grueso) solid var(--color-barra-tareas-borde);
+  border-bottom: var(--borde-grueso) solid var(--color-barra-tareas-borde);
+  box-shadow: var(--bisel-saliente);
+  z-index: var(--capa-barra-tareas);
+}
+
+.inicio,
+.tarea,
+.bandeja {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  height: 30px;
+  padding: 0 var(--espacio-3);
+  font: inherit;
+  color: inherit;
+  white-space: nowrap;
+  background: var(--color-ventana);
+  border: var(--borde-fino) solid var(--color-barra-tareas-borde);
+  box-shadow: var(--bisel-saliente);
+}
+
+.inicio,
+.tarea {
+  cursor: pointer;
+}
+
+.inicio {
+  padding: 0 var(--espacio-3) 0 var(--espacio-2);
+  font-size: var(--texto-sm);
+}
+
+.inicio:hover,
+.tarea:hover {
+  background: var(--color-acento-suave);
+}
+
+.inicio:active,
+.inicio[aria-expanded='true'],
+.tarea--activa {
+  background: var(--color-boton-tarea-activo);
+  box-shadow: var(--bisel-hundido);
+}
+
+.inicio__logo {
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+/* Menú del botón Start: pegado a la esquina izquierda, apoyado sobre el borde
+   superior de la barra de tareas (el 100 % se mide desde adentro del borde). */
+.menu-inicio {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + var(--borde-grueso));
+}
+
+.separador {
+  width: 2px;
+  height: 26px;
+  border-left: var(--borde-fino) solid var(--color-bisel-oscuro);
+  border-right: var(--borde-fino) solid var(--color-bisel-claro);
+}
+
+.tareas {
+  display: flex;
+  flex: 1;
+  gap: var(--espacio-1);
+  min-width: 0;
+  overflow: hidden;
+}
+
+.tarea {
+  width: 168px;
+  min-width: 0;
+}
+
+.tarea__icono {
+  width: 12px;
+  height: 12px;
+  flex: none;
+  background: var(--color-icono-ventana);
+  border: var(--borde-fino) solid var(--color-borde);
+}
+
+.tarea__etiqueta {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bandeja {
+  gap: var(--espacio-3);
+  box-shadow: var(--bisel-hundido);
+}
+
+/* ---------- Celular: área en columna y barra solo con íconos ---------- */
+
+@container escritorio (max-width: 640px) {
+  :host::before {
+    width: 100%;
+  }
+
+  .area {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: var(--espacio-3);
+    padding: var(--espacio-2);
+  }
+
+  .barra-tareas {
+    justify-content: space-between;
+    height: 52px;
+    padding: 0 var(--espacio-2);
+  }
+
+  .inicio,
+  .tarea {
+    height: 40px;
+  }
+
+  .menu-inicio {
+    right: 0;
+  }
+
+  .inicio__nombre,
+  .separador,
+  .tarea__etiqueta {
+    display: none;
+  }
+
+  .tareas {
+    justify-content: center;
+  }
+
+  .tarea {
+    width: auto;
+  }
+
+  .tarea__icono {
+    width: 16px;
+    height: 16px;
+  }
+}

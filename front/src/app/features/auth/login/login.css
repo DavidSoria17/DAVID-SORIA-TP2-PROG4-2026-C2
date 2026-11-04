@@ -1,0 +1,28 @@
+.saludo {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-3);
+}
+
+.saludo__titulo {
+  font-size: var(--texto-xl);
+}
+
+.saludo__texto {
+  margin: 0;
+  font-size: var(--texto-sm);
+  color: var(--color-texto-secundario);
+}
+
+.pie {
+  margin: 0;
+  font-family: var(--fuente-sistema);
+  font-size: var(--texto-sm);
+  text-align: center;
+}
+
+.saludo__logo {
+  flex: none;
+  object-fit: contain;
+  image-rendering: pixelated;
+}

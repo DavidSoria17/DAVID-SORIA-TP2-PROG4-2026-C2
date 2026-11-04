@@ -1,0 +1,46 @@
+:host {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--espacio-2);
+  padding: var(--espacio-2);
+  background: var(--color-ventana-alterna);
+  border: var(--borde-fino) solid var(--color-borde-suave);
+}
+
+.cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--espacio-2);
+  font-family: var(--fuente-sistema);
+  font-size: var(--texto-xs);
+}
+
+.autor {
+  color: var(--color-texto);
+}
+
+.fecha {
+  color: var(--color-texto-secundario);
+}
+
+.editado {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 var(--espacio-1);
+  font-family: var(--fuente-sistema);
+  font-size: var(--texto-2xs);
+  color: var(--color-aviso);
+  background: var(--color-aviso-fondo);
+  border: var(--borde-fino) dashed var(--color-aviso);
+}
+
+.texto {
+  margin: 2px 0 0;
+  font-family: var(--fuente-contenido);
+  font-size: var(--texto-sm);
+  line-height: var(--interlineado-normal);
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}

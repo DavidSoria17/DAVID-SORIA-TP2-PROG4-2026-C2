@@ -1,0 +1,15 @@
+.parrafo {
+  margin: var(--espacio-2) 0;
+  font-size: var(--texto-sm);
+  line-height: var(--interlineado-amplio);
+}
+
+.consejos {
+  display: grid;
+  gap: var(--espacio-1);
+  margin: 0;
+  padding-left: var(--espacio-5);
+  font-family: var(--fuente-sistema);
+  font-size: var(--texto-xs);
+  color: var(--color-texto-secundario);
+}

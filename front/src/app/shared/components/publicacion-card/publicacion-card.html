@@ -1,0 +1,79 @@
+@let datos = publicacion();
+<article class="publicacion" [class.propia]="propia()" [class.compacta]="compacta()">
+  <header class="cabecera">
+    <app-avatar
+      [tamano]="compacta() ? 'chico' : 'normal'"
+      [nombreUsuario]="datos.autor.nombreUsuario"
+      [urlImagen]="datos.autor.urlImagen"
+    />
+    <div class="autor">
+      <span class="nombre">{{ '@' + datos.autor.nombreUsuario }}</span>
+      <time
+        class="meta"
+        [attr.datetime]="datos.createdAt"
+        [title]="datos.createdAt | date: 'dd/MM/yyyy HH:mm'"
+      >
+        {{ datos.createdAt | tiempoRelativo }}
+      </time>
+    </div>
+  </header>
+
+  <h2 class="titulo">{{ datos.titulo }}</h2>
+  <p class="mensaje">{{ datos.mensaje }}</p>
+
+  @if (datos.urlImagen; as url) {
+    <figure class="imagen">
+      <img [src]="url" [alt]="'Imagen de «' + datos.titulo + '»'" loading="lazy" />
+    </figure>
+  }
+
+  <footer class="acciones">
+    <button
+      class="me-gusta"
+      type="button"
+      [attr.aria-pressed]="datos.meGustaPropio"
+      [attr.aria-label]="
+        (datos.meGustaPropio ? 'Quitar me gusta. ' : 'Dar me gusta. ') +
+        datos.cantidadMeGusta +
+        ' me gusta'
+      "
+      [attr.aria-busy]="esperandoMeGusta()"
+      (click)="pedirMeGusta()"
+    >
+      <app-icono [nombre]="datos.meGustaPropio ? 'corazon' : 'corazonVacio'" />
+      <span aria-hidden="true">{{ datos.cantidadMeGusta }}</span>
+    </button>
+    <span class="comentarios" [attr.aria-label]="datos.cantidadComentarios + ' comentarios'">
+      <app-icono nombre="comentario" />
+      <span aria-hidden="true">{{ datos.cantidadComentarios }}</span>
+    </span>
+    <span class="separador"></span>
+    @if (eliminable()) {
+      <button
+        class="borrar"
+        type="button"
+        aria-label="Borrar publicación"
+        (click)="confirmando.set(true)"
+      >
+        <app-icono nombre="basura" />
+      </button>
+    }
+  </footer>
+
+  <ng-content />
+</article>
+
+@if (confirmando()) {
+  <app-modal
+    tituloVentana="atención"
+    tipo="alerta"
+    encabezado="¿Borrar esta publicación?"
+    (cerrar)="confirmando.set(false)"
+  >
+    <button class="boton" type="button" autofocus (click)="confirmando.set(false)">Cancelar</button>
+    <button class="boton boton--peligro" type="button" (click)="confirmarEliminacion()">
+      <app-icono nombre="basura" [escala]="1" />
+      Borrar
+    </button>
+  </app-modal>
+}

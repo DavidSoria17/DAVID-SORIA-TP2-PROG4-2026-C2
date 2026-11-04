@@ -1,0 +1,27 @@
+<div class="previa">
+  @if (vistaPrevia(); as url) {
+    <img [src]="url" alt="Vista previa de la imagen elegida" />
+  } @else {
+    <app-icono nombre="imagen" [escala]="4" />
+  }
+</div>
+<div class="acciones">
+  <input
+    #selector
+    class="solo-lectores"
+    type="file"
+    [id]="idControl()"
+    [accept]="tiposAceptados"
+    (change)="elegir(selector)"
+  />
+  <label class="boton boton--chico" [for]="idControl()">
+    <app-icono nombre="subir" [escala]="1" />
+    <span>{{ archivo() ? 'Cambiar imagen' : 'Elegir imagen' }}</span>
+  </label>
+  @if (detalle(); as texto) {
+    <span class="detalle">{{ texto }}</span>
+    <button class="enlace" type="button" (click)="quitar(selector)">Quitar</button>
+  } @else {
+    <span class="detalle">JPG, PNG o WebP de hasta 2 MB</span>
+  }
+</div>

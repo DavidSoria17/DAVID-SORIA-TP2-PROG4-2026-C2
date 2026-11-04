@@ -1,0 +1,60 @@
+dialog {
+  width: min(440px, calc(100% - 2 * var(--espacio-4)));
+  max-width: none;
+  padding: 0;
+  overflow: visible;
+  background: transparent;
+  border: 0;
+}
+
+dialog::backdrop {
+  background-color: color-mix(in srgb, var(--color-fondo-escritorio) 55%, transparent);
+  background-image: var(--trama-deshabilitado);
+}
+
+app-ventana {
+  width: 100%;
+  box-shadow: var(--sombra-dialogo), var(--bisel-saliente);
+}
+
+.contenido {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--espacio-4);
+  padding: var(--espacio-1);
+}
+
+.encabezado {
+  margin: 0 0 var(--espacio-1);
+  font-family: var(--fuente-sistema);
+  font-size: var(--texto-md);
+  overflow-wrap: anywhere;
+}
+
+.contenido--peligro .encabezado {
+  color: var(--color-peligro);
+}
+
+.texto {
+  margin: 0;
+  font-size: var(--texto-sm);
+  overflow-wrap: anywhere;
+}
+
+.acciones {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--espacio-3);
+  margin-top: var(--espacio-2);
+}
+
+@media (max-width: 640px) {
+  .contenido {
+    grid-template-columns: 1fr;
+  }
+
+  .acciones {
+    flex-direction: column-reverse;
+  }
+}

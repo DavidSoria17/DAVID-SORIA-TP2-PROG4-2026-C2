@@ -1,0 +1,257 @@
+:host {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  width: var(--ancho-ventana);
+  max-width: 100%;
+  padding: 2px;
+  background: var(--color-ventana-marco);
+  border: var(--borde-ventana);
+  border-radius: var(--radio-ventana);
+  box-shadow: var(--sombra-ventana-activa), var(--bisel-saliente);
+  z-index: var(--capa-ventana-activa);
+}
+
+/* En computadora la ventana flota sobre el escritorio y nunca es más alta que él;
+   si el contenido no entra, se desplaza adentro del cuerpo. */
+:host(.flotante) {
+  position: absolute;
+  max-height: 100%;
+}
+
+/* Maximizada ocupa toda el área del escritorio (el contenedor posicionado más cercano). */
+:host(.maximizada) {
+  inset: 0;
+  width: auto;
+  height: auto;
+  max-width: none;
+  box-shadow: var(--bisel-saliente);
+}
+
+:host(.oculta) {
+  display: none;
+}
+
+:host(.arrastrando) {
+  user-select: none;
+}
+
+.barra {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  height: var(--alto-barra-titulo);
+  padding: 0 var(--espacio-1) 0 var(--espacio-2);
+  color: var(--color-texto-barra-titulo-activa);
+  background: var(--color-barra-titulo-activa);
+  border: var(--borde-fino) solid var(--color-borde);
+  user-select: none;
+  touch-action: none;
+}
+
+:host(.movible) .barra {
+  cursor: move;
+}
+
+.icono-ventana {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  background: var(--color-icono-ventana);
+  border: var(--borde-fino) solid var(--color-borde);
+}
+
+.titulo {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-family: var(--fuente-sistema-titulo);
+  font-size: var(--texto-sm);
+  font-weight: var(--peso-normal);
+  letter-spacing: var(--espaciado-letras-sistema);
+  text-transform: var(--mayusculas-titulo);
+  text-shadow: var(--sombra-texto-titulo);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cargando {
+  flex: none;
+}
+
+.controles {
+  display: flex;
+  gap: 2px;
+}
+
+.cuerpo {
+  flex: 1;
+  min-height: 0;
+  margin-top: 2px;
+  padding: var(--espacio-4);
+  overflow: auto;
+  background: var(--color-ventana);
+  border: var(--borde-fino) solid var(--color-borde);
+}
+
+.estado {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--espacio-2);
+  margin-top: 2px;
+  padding: 2px var(--espacio-2);
+  font-family: var(--fuente-sistema);
+  font-size: var(--texto-2xs);
+  color: var(--color-texto-secundario);
+  background: var(--color-ventana-alterna);
+  border: var(--borde-fino) solid var(--color-borde);
+}
+
+.pie {
+  display: flex;
+  align-items: center;
+  flex: none;
+  height: var(--alto-franja-ventana);
+  margin-top: 2px;
+  background: var(--color-franja-ventana);
+  border: var(--borde-fino) solid var(--color-borde);
+}
+
+.pie::before {
+  content: '';
+  width: 28px;
+  height: 100%;
+  background: var(--color-franja-ventana-marca);
+  border-right: var(--borde-fino) solid var(--color-borde);
+}
+
+.pie::after {
+  content: '';
+  width: 18px;
+  height: 4px;
+  margin-left: 2px;
+  background:
+    linear-gradient(var(--color-borde) 0 0) 0 0 / 4px 4px no-repeat,
+    linear-gradient(var(--color-borde) 0 0) 7px 0 / 4px 4px no-repeat,
+    linear-gradient(var(--color-borde) 0 0) 14px 0 / 4px 4px no-repeat;
+}
+
+/* Bordes y esquinas para cambiar el tamaño: franjas invisibles sobre el contorno,
+   solo con un puntero preciso (mouse). */
+.borde {
+  position: absolute;
+  display: none;
+  touch-action: none;
+  z-index: 1;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .borde {
+    display: block;
+  }
+}
+
+.borde--arriba,
+.borde--abajo {
+  left: 8px;
+  right: 8px;
+  height: 6px;
+  cursor: ns-resize;
+}
+
+.borde--izquierda,
+.borde--derecha {
+  top: 8px;
+  bottom: 8px;
+  width: 6px;
+  cursor: ew-resize;
+}
+
+.borde--arriba {
+  top: -4px;
+}
+
+.borde--abajo {
+  bottom: -4px;
+}
+
+.borde--izquierda {
+  left: -4px;
+}
+
+.borde--derecha {
+  right: -4px;
+}
+
+.borde--arriba-izquierda,
+.borde--arriba-derecha,
+.borde--abajo-izquierda,
+.borde--abajo-derecha {
+  width: 12px;
+  height: 12px;
+}
+
+.borde--arriba-izquierda {
+  top: -4px;
+  left: -4px;
+  cursor: nwse-resize;
+}
+
+.borde--abajo-derecha {
+  right: -4px;
+  bottom: -4px;
+  cursor: nwse-resize;
+}
+
+.borde--arriba-derecha {
+  top: -4px;
+  right: -4px;
+  cursor: nesw-resize;
+}
+
+.borde--abajo-izquierda {
+  bottom: -4px;
+  left: -4px;
+  cursor: nesw-resize;
+}
+
+/* Marca de la esquina inferior derecha: tres escalones pixel. */
+.borde--abajo-derecha::after {
+  content: '';
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  width: 10px;
+  height: 10px;
+  background:
+    linear-gradient(var(--color-borde) 0 0) 8px 0 / 2px 2px no-repeat,
+    linear-gradient(var(--color-borde) 0 0) 4px 4px / 2px 2px no-repeat,
+    linear-gradient(var(--color-borde) 0 0) 8px 4px / 2px 2px no-repeat,
+    linear-gradient(var(--color-borde) 0 0) 0 8px / 2px 2px no-repeat,
+    linear-gradient(var(--color-borde) 0 0) 4px 8px / 2px 2px no-repeat,
+    linear-gradient(var(--color-borde) 0 0) 8px 8px / 2px 2px no-repeat;
+}
+
+@container escritorio (max-width: 640px) {
+  :host {
+    width: 100%;
+  }
+
+  .cuerpo {
+    padding: var(--espacio-3);
+  }
+}
+
+/* El contenido trae sus propias secciones (barra de comandos, cuerpo, estado):
+   el cuerpo solo las apila, sin fondo ni borde. */
+:host(.con-secciones) .cuerpo {
+  display: flex;
+  flex-direction: column;
+  margin-top: 0;
+  padding: 0;
+  overflow: hidden;
+  background: none;
+  border: 0;
+}

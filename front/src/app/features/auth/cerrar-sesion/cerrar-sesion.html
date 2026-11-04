@@ -1,0 +1,27 @@
+@if (usuario(); as sesion) {
+  <div class="pila confirmacion">
+    <app-avatar
+      tamano="grande"
+      [nombreUsuario]="sesion.nombreUsuario"
+      [urlImagen]="sesion.urlImagen"
+    />
+    <div>
+      <h1 class="titulo-seccion titulo">¿Cerrar la sesión?</h1>
+      <p class="texto-secundario">
+        Vas a salir de la cuenta {{ '@' + sesion.nombreUsuario }}. Para volver, tenés que iniciar
+        sesión de nuevo.
+      </p>
+    </div>
+    <div class="acciones">
+      <a class="boton" routerLink="/publicaciones">Cancelar</a>
+      <button class="boton boton--primario" type="button" (click)="confirmar()">
+        Cerrar sesión
+      </button>
+    </div>
+  </div>
+} @else {
+  <h1 class="solo-lectores">Cerrar sesión</h1>
+  <app-estado-vacio titulo="No hay una sesión iniciada">
+    <a class="boton boton--primario" routerLink="/login">Iniciar sesión</a>
+  </app-estado-vacio>
+}

@@ -1,0 +1,17 @@
+.avisos {
+  position: fixed;
+  right: var(--espacio-4);
+  bottom: calc(var(--alto-barra-tareas) + var(--espacio-4));
+  display: grid;
+  gap: var(--espacio-2);
+  width: min(360px, calc(100% - 2 * var(--espacio-4)));
+  z-index: var(--capa-aviso);
+}
+
+@media (max-width: 640px) {
+  .avisos {
+    right: var(--espacio-2);
+    bottom: calc(52px + var(--espacio-2));
+    width: calc(100% - 2 * var(--espacio-2));
+  }
+}

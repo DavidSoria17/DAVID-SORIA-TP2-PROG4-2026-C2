@@ -1,0 +1,12 @@
+<svg
+  aria-hidden="true"
+  focusable="false"
+  shape-rendering="crispEdges"
+  [attr.width]="icono().ancho * escala()"
+  [attr.height]="icono().alto * escala()"
+  [attr.viewBox]="'0 0 ' + icono().ancho + ' ' + icono().alto"
+>
+  @for (trazo of icono().trazos; track $index) {
+    <path [attr.d]="trazo.d" [style.fill]="trazo.color ?? 'currentColor'" />
+  }
+</svg>
