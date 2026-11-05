@@ -36,6 +36,11 @@
   border: var(--borde-fino) dashed var(--color-aviso);
 }
 
+.editar {
+  margin-left: auto;
+  font-size: var(--texto-xs);
+}
+
 .texto {
   margin: 2px 0 0;
   font-family: var(--fuente-contenido);

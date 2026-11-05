@@ -63,6 +63,23 @@ export class AuthService {
     return { usuario, token: this.firmarToken(usuario) };
   }
 
+  /**
+   * Datos actualizados del usuario de un token que ya validó `TokenGuard`.
+   * Lanza 403 si la cuenta se deshabilitó después de emitir el token.
+   */
+  autorizar(sesion: PayloadToken): Promise<UsuarioDocument> {
+    return this.usuariosService.buscarActivo(sesion.sub);
+  }
+
+  /**
+   * Token nuevo con el mismo payload y otros 15 minutos de validez. Lanza 403
+   * si la cuenta se deshabilitó después de emitir el token anterior.
+   */
+  async refrescar(sesion: PayloadToken): Promise<{ token: string }> {
+    const usuario = await this.usuariosService.buscarActivo(sesion.sub);
+    return { token: this.firmarToken(usuario) };
+  }
+
   private firmarToken(usuario: UsuarioDocument): string {
     const payload: PayloadToken = {
       sub: usuario.id,

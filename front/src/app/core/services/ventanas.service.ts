@@ -1,6 +1,6 @@
 import { computed, Service, signal } from '@angular/core';
 import { destroyDetachedRouteHandle, DetachedRouteHandle } from '@angular/router';
-import { ConfigVentana, VentanaAbierta } from '../models/interfaz.model';
+import { ConfigVentana, PantallaGuardada, VentanaAbierta } from '../models/interfaz.model';
 import { rutaDeApp } from '../utils/rutas.utils';
 
 /**
@@ -13,7 +13,7 @@ export class VentanasService {
   private readonly listaAbiertas = signal<VentanaAbierta[]>([]);
   private readonly rutaActiva = signal<string | null>(null);
   private readonly activaMinimizada = signal(false);
-  private readonly pantallasGuardadas = new Map<string, DetachedRouteHandle>();
+  private readonly pantallasGuardadas = new Map<string, PantallaGuardada>();
 
   readonly abiertas = this.listaAbiertas.asReadonly();
   readonly activa = this.rutaActiva.asReadonly();
@@ -58,7 +58,7 @@ export class VentanasService {
     this.listaAbiertas.update((abiertas) => abiertas.filter((abierta) => abierta.ruta !== ruta));
     for (const [rutaPantalla, guardada] of this.pantallasGuardadas) {
       if (rutaDeApp(rutaPantalla) !== ruta) continue;
-      destroyDetachedRouteHandle(guardada);
+      destroyDetachedRouteHandle(guardada.pantalla);
       this.pantallasGuardadas.delete(rutaPantalla);
     }
   }
@@ -72,13 +72,25 @@ export class VentanasService {
     return this.listaAbiertas().some((abierta) => abierta.ruta === ruta);
   }
 
-  /** Para `VentanasReuseStrategy`: guarda o borra una pantalla (por su ruta) de una app abierta. */
-  guardarPantalla(ruta: string, pantalla: DetachedRouteHandle | null): void {
-    if (pantalla) this.pantallasGuardadas.set(ruta, pantalla);
-    else this.pantallasGuardadas.delete(ruta);
+  /**
+   * Para `VentanasReuseStrategy`: guarda la pantalla de una ruta de una app
+   * abierta, mostrando la dirección `url`, o la borra si se volvió a enganchar
+   * (`null`). Hay un lugar por ruta: si había otra pantalla guardada para la
+   * misma ruta con otra dirección (el detalle de otra publicación), se destruye.
+   */
+  guardarPantalla(ruta: string, pantalla: DetachedRouteHandle | null, url: string): void {
+    if (!pantalla) {
+      this.pantallasGuardadas.delete(ruta);
+      return;
+    }
+    const anterior = this.pantallasGuardadas.get(ruta);
+    if (anterior && anterior.pantalla !== pantalla) destroyDetachedRouteHandle(anterior.pantalla);
+    this.pantallasGuardadas.set(ruta, { pantalla, url });
   }
 
-  pantallaGuardada(ruta: string): DetachedRouteHandle | null {
-    return this.pantallasGuardadas.get(ruta) ?? null;
+  /** Pantalla guardada de la ruta, solo si quedó en la misma dirección. */
+  pantallaGuardada(ruta: string, url: string): DetachedRouteHandle | null {
+    const guardada = this.pantallasGuardadas.get(ruta);
+    return guardada?.url === url ? guardada.pantalla : null;
   }
 }

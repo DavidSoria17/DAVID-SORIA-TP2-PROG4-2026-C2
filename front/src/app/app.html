@@ -13,3 +13,24 @@
 </div>
 
 <app-spinner-cursor [visible]="cargaService.visible()" />
+
+@if (sesionService.avisoVencimiento()) {
+  <app-modal
+    tituloVentana="atención"
+    tipo="alerta"
+    encabezado="Tu sesión vence en 5 minutos"
+    texto="¿Querés extenderla? Si no, vas a tener que volver a iniciar sesión."
+    (cerrar)="sesionService.descartarAviso()"
+  >
+    <button class="boton" type="button" (click)="sesionService.descartarAviso()">Ahora no</button>
+    <button
+      class="boton boton--primario"
+      type="button"
+      autofocus
+      [disabled]="sesionService.extendiendo()"
+      (click)="sesionService.extender()"
+    >
+      {{ sesionService.extendiendo() ? 'Extendiendo…' : 'Extender sesión' }}
+    </button>
+  </app-modal>
+}

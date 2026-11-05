@@ -56,6 +56,15 @@
   overflow-wrap: anywhere;
 }
 
+.titulo__enlace {
+  color: inherit;
+  text-decoration: none;
+}
+
+.titulo__enlace:hover {
+  text-decoration: underline;
+}
+
 /* Respeta los saltos de línea que escribió el autor. */
 .mensaje {
   margin: 0;
@@ -108,8 +117,22 @@
   box-shadow: var(--sombra-boton);
 }
 
-.me-gusta {
+.me-gusta,
+.comentarios--enlace {
   cursor: pointer;
+}
+
+.comentarios--enlace {
+  text-decoration: none;
+}
+
+.comentarios--enlace:hover {
+  background: var(--color-acento-suave);
+}
+
+.comentarios--enlace:active {
+  box-shadow: var(--bisel-hundido);
+  transform: translate(2px, 2px);
 }
 
 .me-gusta app-icono {

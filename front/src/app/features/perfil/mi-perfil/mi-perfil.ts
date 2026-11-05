@@ -58,7 +58,7 @@ export class MiPerfil implements OnInit {
 
   /** Borra la publicación y vuelve a traer las últimas, así entra la siguiente más vieja. */
   protected async eliminar(publicacion: Publicacion): Promise<void> {
-    if (await this.publicacionesService.eliminar(publicacion._id)) {
+    if (await this.publicacionesService.eliminar(publicacion)) {
       await this.cargar(publicacion.autor._id);
     }
   }

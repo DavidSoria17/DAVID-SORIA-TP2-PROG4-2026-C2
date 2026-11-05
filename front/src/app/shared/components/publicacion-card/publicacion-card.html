@@ -18,7 +18,13 @@
     </div>
   </header>
 
-  <h2 class="titulo">{{ datos.titulo }}</h2>
+  <h2 class="titulo">
+    @if (enlace(); as ruta) {
+      <a class="titulo__enlace" [routerLink]="ruta">{{ datos.titulo }}</a>
+    } @else {
+      {{ datos.titulo }}
+    }
+  </h2>
   <p class="mensaje">{{ datos.mensaje }}</p>
 
   @if (datos.urlImagen; as url) {
@@ -43,10 +49,21 @@
       <app-icono [nombre]="datos.meGustaPropio ? 'corazon' : 'corazonVacio'" />
       <span aria-hidden="true">{{ datos.cantidadMeGusta }}</span>
     </button>
-    <span class="comentarios" [attr.aria-label]="datos.cantidadComentarios + ' comentarios'">
-      <app-icono nombre="comentario" />
-      <span aria-hidden="true">{{ datos.cantidadComentarios }}</span>
-    </span>
+    @if (enlace(); as ruta) {
+      <a
+        class="comentarios comentarios--enlace"
+        [routerLink]="ruta"
+        [attr.aria-label]="'Ver los ' + datos.cantidadComentarios + ' comentarios'"
+      >
+        <app-icono nombre="comentario" />
+        <span aria-hidden="true">{{ datos.cantidadComentarios }}</span>
+      </a>
+    } @else {
+      <span class="comentarios" [attr.aria-label]="datos.cantidadComentarios + ' comentarios'">
+        <app-icono nombre="comentario" />
+        <span aria-hidden="true">{{ datos.cantidadComentarios }}</span>
+      </span>
+    }
     <span class="separador"></span>
     @if (eliminable()) {
       <button

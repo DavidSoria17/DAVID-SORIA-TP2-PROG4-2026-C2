@@ -21,6 +21,11 @@ export interface RespuestaAuth {
   token: string;
 }
 
+/** Respuesta de `POST /auth/refrescar`. */
+export interface TokenRefrescado {
+  token: string;
+}
+
 export interface DatosLogin {
   /** Correo o nombre de usuario. */
   usuario: string;

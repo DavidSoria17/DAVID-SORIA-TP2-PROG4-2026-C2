@@ -142,6 +142,26 @@ export class PublicacionesService {
   }
 
   /**
+   * Una publicación activa, con si le dio me gusta quien la pide. Si no
+   * existe o está dada de baja, 404.
+   */
+  async obtener(
+    id: Types.ObjectId,
+    idUsuario: string,
+  ): Promise<PublicacionListada> {
+    const [publicacion, meGustaPropio] = await Promise.all([
+      this.publicacionModel
+        .findOne({ _id: id, activa: true })
+        .select('-activa')
+        .lean<Omit<PublicacionListada, 'meGustaPropio'>>()
+        .exec(),
+      this.meGustaModel.exists({ publicacion: id, usuario: idUsuario }).exec(),
+    ]);
+    if (!publicacion) throw new NotFoundException('La publicación no existe');
+    return { ...publicacion, meGustaPropio: meGustaPropio !== null };
+  }
+
+  /**
    * Baja lógica. Solo puede hacerla el autor o un administrador (403); si la
    * publicación no existe o ya estaba dada de baja, 404.
    */

@@ -1,3 +1,4 @@
+import { DetachedRouteHandle } from '@angular/router';
 import { NombreIcono, NombreIconoApp } from './icono.model';
 
 /** Con qué sesión aparece una app en el escritorio. */
@@ -108,6 +109,13 @@ export interface VentanaAbierta {
   ruta: string;
   config: ConfigVentana;
   /** Última dirección que mostró: puede ser una pantalla interna de la app (`/publicaciones/nueva`). */
+  url: string;
+}
+
+/** Pantalla de una app abierta que se guardó al pasar a otra, con la dirección en la que estaba. */
+export interface PantallaGuardada {
+  pantalla: DetachedRouteHandle;
+  /** Dirección con sus parámetros: `/publicaciones/:id` guarda el detalle de una sola publicación. */
   url: string;
 }
 

@@ -1,0 +1,41 @@
+.volver,
+.cargar-mas {
+  justify-self: start;
+}
+
+.contador {
+  align-self: flex-end;
+  font-family: var(--fuente-sistema);
+  font-size: var(--texto-2xs);
+  color: var(--color-texto-secundario);
+}
+
+.acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--espacio-3);
+}
+
+.comentarios {
+  display: grid;
+  gap: var(--espacio-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.edicion {
+  padding: var(--espacio-2);
+  background: var(--color-ventana-alterna);
+  border: var(--borde-fino) solid var(--color-borde-suave);
+}
+
+@container escritorio (max-width: 640px) {
+  .acciones {
+    flex-direction: column-reverse;
+  }
+
+  .cargar-mas {
+    justify-self: stretch;
+  }
+}

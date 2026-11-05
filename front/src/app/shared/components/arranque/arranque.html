@@ -1,5 +1,9 @@
 <div class="logo">
-  <app-icono [nombre]="icono()" [escala]="6" />
+  @if (icono(); as nombre) {
+    <app-icono [nombre]="nombre" [escala]="6" />
+  } @else {
+    <img class="logo__imagen" ngSrc="iconos/apps/logo.png" width="64" height="52" priority alt="" />
+  }
   <span>{{ titulo() }}</span>
 </div>
 <span class="version">{{ subtitulo() }}</span>
@@ -31,3 +35,4 @@
     <div class="progreso__relleno" [style.--valor.%]="progreso()"></div>
   </div>
 </div>
+<ng-content />

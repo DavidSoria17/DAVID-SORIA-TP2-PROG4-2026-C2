@@ -5,9 +5,13 @@ import {
   HttpStatus,
   Post,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { UsuarioActual } from '../common/decorators/usuario-actual.decorator.js';
+import { TokenGuard } from '../common/guards/token.guard.js';
+import type { PayloadToken } from '../common/interfaces/payload-token.interface.js';
 import { validarImagenOpcional } from '../common/pipes/imagen-opcional.pipe.js';
 import { NormalizarTextoPipe } from '../common/pipes/normalizar-texto.pipe.js';
 import { CrearUsuarioDto } from '../usuarios/dto/crear-usuario.dto.js';
@@ -31,5 +35,19 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   iniciarSesion(@Body(NormalizarTextoPipe) datos: LoginDto) {
     return this.authService.iniciarSesion(datos);
+  }
+
+  @Post('autorizar')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(TokenGuard)
+  autorizar(@UsuarioActual() usuario: PayloadToken) {
+    return this.authService.autorizar(usuario);
+  }
+
+  @Post('refrescar')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(TokenGuard)
+  refrescar(@UsuarioActual() usuario: PayloadToken) {
+    return this.authService.refrescar(usuario);
   }
 }

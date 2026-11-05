@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { appInstaladaGuard } from './core/guards/app-instalada.guard';
+import { cargaInicialGuard } from './core/guards/carga-inicial.guard';
 import { ConfigVentana } from './core/models/interfaz.model';
 import { EscritorioLayout } from './layouts/escritorio-layout/escritorio-layout';
 
@@ -10,9 +11,16 @@ const ventana = (config: ConfigVentana) => ({ ventana: config });
 const VENTANA_TWEETER: ConfigVentana = { titulo: 'tweeter', ancho: '620px' };
 
 export const routes: Routes = [
+  // Pantalla de arranque: valida el token guardado y lleva a Tweeter o al login.
+  {
+    path: 'cargando',
+    title: 'Windose 20',
+    loadComponent: () => import('./features/cargando/cargando').then((modulo) => modulo.Cargando),
+  },
   {
     path: '',
     component: EscritorioLayout,
+    canActivate: [cargaInicialGuard],
     canActivateChild: [appInstaladaGuard],
     children: [
       // Escritorio sin ventanas abiertas.
@@ -62,6 +70,13 @@ export const routes: Routes = [
           import('./features/publicaciones/nueva-publicacion/nueva-publicacion').then(
             (modulo) => modulo.NuevaPublicacion,
           ),
+      },
+      {
+        path: 'publicaciones/:id',
+        title: 'Publicación · Tweeter · Windose 20',
+        data: ventana(VENTANA_TWEETER),
+        loadComponent: () =>
+          import('./features/publicaciones/detalle/detalle').then((modulo) => modulo.Detalle),
       },
       {
         path: 'perfil',

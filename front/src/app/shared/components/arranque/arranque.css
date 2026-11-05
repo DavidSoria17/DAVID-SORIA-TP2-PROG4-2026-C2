@@ -74,3 +74,8 @@
 .progreso__datos {
   color: var(--color-texto-arranque);
 }
+
+.logo__imagen {
+  object-fit: contain;
+  image-rendering: pixelated;
+}

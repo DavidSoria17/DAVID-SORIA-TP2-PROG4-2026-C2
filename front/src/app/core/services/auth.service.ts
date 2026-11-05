@@ -2,13 +2,22 @@ import { HttpClient, HttpContext } from '@angular/common/http';
 import { computed, inject, Service, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { DatosLogin, DatosRegistro, RespuestaAuth, Usuario } from '../models/usuario.model';
+import {
+  DatosLogin,
+  DatosRegistro,
+  RespuestaAuth,
+  TokenRefrescado,
+  Usuario,
+} from '../models/usuario.model';
 import { SIN_TOKEN } from '../utils/http.constants';
 
 const CLAVE_TOKEN = 'token';
 const CLAVE_USUARIO = 'usuario';
 
-/** Sesión del usuario: login, registro y cierre, con el token y el usuario guardados en el navegador. */
+/**
+ * Sesión del usuario: login, registro, validación y refresco del token, y
+ * cierre, con el token y el usuario guardados en el navegador.
+ */
 @Service()
 export class AuthService {
   private readonly http = inject(HttpClient);
@@ -16,8 +25,11 @@ export class AuthService {
   private readonly sinToken = { context: new HttpContext().set(SIN_TOKEN, true) };
 
   private readonly usuarioSesion = signal<Usuario | null>(this.leerUsuarioGuardado());
+  private readonly tokenSesion = signal<string | null>(localStorage.getItem(CLAVE_TOKEN));
 
   readonly usuario = this.usuarioSesion.asReadonly();
+  /** Token de la sesión guardada, o `null` si no hay sesión. Lo usan `tokenInterceptor` y `SesionService`. */
+  readonly token = this.tokenSesion.asReadonly();
   readonly haySesion = computed(() => this.usuarioSesion() !== null);
 
   /**
@@ -46,23 +58,51 @@ export class AuthService {
     return this.guardarSesion(respuesta);
   }
 
-  /** Token de la sesión guardada, o `null` si no hay sesión. Lo usa `tokenInterceptor`. */
-  token(): string | null {
-    return localStorage.getItem(CLAVE_TOKEN);
+  /**
+   * Valida el token guardado contra la API y actualiza los datos del usuario.
+   * @returns el usuario de la sesión; rechaza con el `HttpErrorResponse` si el token no es válido
+   */
+  async autorizar(): Promise<Usuario> {
+    const usuario = await firstValueFrom(
+      this.http.post<Usuario>(`${this.urlAuth}/autorizar`, null),
+    );
+    this.guardarUsuario(usuario);
+    return usuario;
+  }
+
+  /**
+   * Cambia el token por uno nuevo con otros 15 minutos de validez.
+   * Rechaza con el `HttpErrorResponse` si el token actual ya no es válido.
+   */
+  async refrescar(): Promise<void> {
+    const { token } = await firstValueFrom(
+      this.http.post<TokenRefrescado>(`${this.urlAuth}/refrescar`, null),
+    );
+    this.guardarToken(token);
   }
 
   /** Borra el token y el usuario del navegador. */
   cerrarSesion(): void {
     localStorage.removeItem(CLAVE_TOKEN);
     localStorage.removeItem(CLAVE_USUARIO);
+    this.tokenSesion.set(null);
     this.usuarioSesion.set(null);
   }
 
   private guardarSesion({ usuario, token }: RespuestaAuth): Usuario {
+    this.guardarToken(token);
+    this.guardarUsuario(usuario);
+    return usuario;
+  }
+
+  private guardarToken(token: string): void {
     localStorage.setItem(CLAVE_TOKEN, token);
+    this.tokenSesion.set(token);
+  }
+
+  private guardarUsuario(usuario: Usuario): void {
     localStorage.setItem(CLAVE_USUARIO, JSON.stringify(usuario));
     this.usuarioSesion.set(usuario);
-    return usuario;
   }
 
   private leerUsuarioGuardado(): Usuario | null {

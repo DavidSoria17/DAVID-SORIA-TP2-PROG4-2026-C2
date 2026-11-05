@@ -40,6 +40,16 @@ export interface EstadoMeGusta {
   meGustaPropio: boolean;
 }
 
+/**
+ * Último cambio hecho a una publicación desde cualquier pantalla. Las
+ * pantallas que quedan guardadas mientras se usa otra (el listado de
+ * Tweeter) lo siguen para no mostrar datos viejos.
+ */
+export interface CambioPublicacion {
+  tipo: 'creada' | 'actualizada' | 'eliminada';
+  publicacion: Publicacion;
+}
+
 export interface DatosPublicacion {
   titulo: string;
   mensaje: string;

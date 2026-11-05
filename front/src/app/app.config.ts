@@ -5,6 +5,7 @@ import { ApplicationConfig, LOCALE_ID, provideBrowserGlobalErrorListeners } from
 import { provideRouter, RouteReuseStrategy } from '@angular/router';
 import { routes } from './app.routes';
 import { cargaInterceptor } from './core/interceptors/carga.interceptor';
+import { erroresInterceptor } from './core/interceptors/errores.interceptor';
 import { tokenInterceptor } from './core/interceptors/token.interceptor';
 import { VentanasReuseStrategy } from './core/routing/ventanas-reuse.strategy';
 
@@ -15,7 +16,10 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     { provide: RouteReuseStrategy, useClass: VentanasReuseStrategy },
-    provideHttpClient(withFetch(), withInterceptors([tokenInterceptor, cargaInterceptor])),
+    provideHttpClient(
+      withFetch(),
+      withInterceptors([tokenInterceptor, erroresInterceptor, cargaInterceptor]),
+    ),
     { provide: LOCALE_ID, useValue: 'es-AR' },
   ],
 };

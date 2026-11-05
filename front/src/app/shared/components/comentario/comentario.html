@@ -16,6 +16,9 @@
         editado
       </span>
     }
+    @if (editable()) {
+      <button class="enlace editar" type="button" (click)="editar.emit()">Editar</button>
+    }
   </div>
   <p class="texto">{{ datos.mensaje }}</p>
 </div>

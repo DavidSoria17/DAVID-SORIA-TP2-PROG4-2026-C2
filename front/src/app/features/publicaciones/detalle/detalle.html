@@ -1,0 +1,135 @@
+<h1 class="solo-lectores">Publicación</h1>
+@if (usuario(); as sesion) {
+  <div class="pila">
+    <a class="boton boton--chico volver" routerLink="/publicaciones">
+      <app-icono nombre="anterior" [escala]="1" />
+      Volver a Tweeter
+    </a>
+
+    @if (error(); as mensaje) {
+      <app-estado-vacio titulo="No pudimos mostrar la publicación" [texto]="mensaje">
+        <a class="boton boton--primario" routerLink="/publicaciones">Ir a Tweeter</a>
+      </app-estado-vacio>
+    } @else if (publicacion(); as datos) {
+      <app-publicacion-card
+        [publicacion]="datos"
+        [propia]="datos.autor._id === sesion._id"
+        [eliminable]="datos.autor._id === sesion._id"
+        (alternarMeGusta)="alternarMeGusta(datos)"
+        (eliminar)="eliminar(datos)"
+      />
+
+      <section class="pila" aria-labelledby="comentarios-titulo">
+        <h2 class="titulo-seccion" id="comentarios-titulo">
+          Comentarios ({{ datos.cantidadComentarios }})
+        </h2>
+
+        <form class="pila pila--chica" [formGroup]="formulario" (ngSubmit)="comentar()">
+          @if (errorComentario(); as mensaje) {
+            <app-aviso
+              tipo="peligro"
+              titulo="No pudimos publicar el comentario"
+              [texto]="mensaje"
+              (cerrar)="errorComentario.set(null)"
+            />
+          }
+          <app-campo-formulario etiqueta="Tu comentario" para="comentario-nuevo">
+            <textarea
+              class="control"
+              id="comentario-nuevo"
+              rows="3"
+              [maxLength]="largoMaximoComentario"
+              formControlName="mensaje"
+            ></textarea>
+            <span class="contador" aria-live="polite">
+              {{ formulario.controls.mensaje.value.length }}/{{ largoMaximoComentario }}
+            </span>
+          </app-campo-formulario>
+          <div class="acciones">
+            <button class="boton boton--primario" type="submit" [disabled]="enviando()">
+              <app-icono nombre="comentario" [escala]="1" />
+              {{ enviando() ? 'Comentando…' : 'Comentar' }}
+            </button>
+          </div>
+        </form>
+
+        @if (comentarios().length > 0) {
+          <ul class="comentarios" aria-label="Comentarios">
+            @for (comentario of comentarios(); track comentario._id) {
+              @if (editando() === comentario._id) {
+                <li class="edicion">
+                  <form
+                    class="pila pila--chica"
+                    [formGroup]="edicion"
+                    (ngSubmit)="guardarEdicion(comentario)"
+                  >
+                    @if (errorEdicion(); as mensaje) {
+                      <app-aviso
+                        tipo="peligro"
+                        titulo="No pudimos editar el comentario"
+                        [texto]="mensaje"
+                        (cerrar)="errorEdicion.set(null)"
+                      />
+                    }
+                    <app-campo-formulario etiqueta="Editar comentario" para="comentario-edicion">
+                      <textarea
+                        class="control"
+                        id="comentario-edicion"
+                        rows="3"
+                        [maxLength]="largoMaximoComentario"
+                        formControlName="mensaje"
+                      ></textarea>
+                      <span class="contador" aria-live="polite">
+                        {{ edicion.controls.mensaje.value.length }}/{{ largoMaximoComentario }}
+                      </span>
+                    </app-campo-formulario>
+                    <div class="acciones">
+                      <button class="boton" type="button" (click)="cancelarEdicion()">
+                        Cancelar
+                      </button>
+                      <button class="boton boton--primario" type="submit" [disabled]="guardando()">
+                        {{ guardando() ? 'Guardando…' : 'Guardar' }}
+                      </button>
+                    </div>
+                  </form>
+                </li>
+              } @else {
+                <app-comentario
+                  [comentario]="comentario"
+                  [editable]="comentario.autor._id === sesion._id"
+                  (editar)="empezarEdicion(comentario)"
+                />
+              }
+            }
+          </ul>
+        } @else if (comentariosCargados()) {
+          <app-estado-vacio titulo="Todavía no hay comentarios" />
+        }
+
+        @if (errorComentarios(); as mensaje) {
+          <app-aviso
+            tipo="peligro"
+            titulo="No pudimos cargar más comentarios"
+            [texto]="mensaje"
+            (cerrar)="errorComentarios.set(null)"
+          />
+        }
+
+        @if (hayMas()) {
+          <button
+            class="boton cargar-mas"
+            type="button"
+            [disabled]="cargandoMas()"
+            (click)="cargarMas()"
+          >
+            {{ cargandoMas() ? 'Cargando…' : 'Cargar más' }}
+          </button>
+        }
+      </section>
+    }
+  </div>
+} @else {
+  <app-estado-vacio titulo="No iniciaste sesión" texto="Entrá con tu cuenta para ver Tweeter.">
+    <a class="boton boton--primario" routerLink="/login">Iniciar sesión</a>
+  </app-estado-vacio>
+}

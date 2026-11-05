@@ -39,6 +39,14 @@ export class PublicacionesController {
     return this.publicacionesService.listar(orden, filtros, usuario.sub);
   }
 
+  @Get(':id')
+  obtener(
+    @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
+    @UsuarioActual() usuario: PayloadToken,
+  ) {
+    return this.publicacionesService.obtener(id, usuario.sub);
+  }
+
   @Post()
   @UseInterceptors(FileInterceptor('imagen'))
   crear(

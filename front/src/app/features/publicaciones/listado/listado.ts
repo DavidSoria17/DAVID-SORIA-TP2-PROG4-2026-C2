@@ -11,7 +11,11 @@ import {
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { OrdenPublicaciones, Publicacion } from '../../../core/models/publicacion.model';
+import {
+  CambioPublicacion,
+  OrdenPublicaciones,
+  Publicacion,
+} from '../../../core/models/publicacion.model';
 import { AuthService } from '../../../core/services/auth.service';
 import { mensajeDeError } from '../../../core/utils/errores.utils';
 import { PUBLICACIONES_POR_PAGINA } from '../../../core/utils/publicaciones.constants';
@@ -25,7 +29,8 @@ import { PublicacionesService } from '../services/publicaciones.service';
 /**
  * Tweeter: publicaciones de todos, de a una página por vez, ordenadas por
  * fecha (por defecto) o por cantidad de me gusta. Desde acá se pasa a la
- * pantalla para publicar, se da o quita me gusta y se borran las propias.
+ * pantalla para publicar o al detalle de una publicación, se da o quita me
+ * gusta y se borran las propias.
  */
 @Component({
   selector: 'app-listado',
@@ -49,22 +54,20 @@ export class Listado implements OnInit, OnDestroy {
   private cambiosDeOrden?: Subscription;
   /** Número del último pedido: si llega la respuesta de uno anterior, se descarta. */
   private ultimoPedido = 0;
-  /** Publicaciones creadas que ya se ven en la lista (las anteriores a abrir Tweeter, también). */
-  private publicadasVistas = this.publicacionesService.publicadas();
+  /** Último cambio que ya refleja la lista (el anterior a abrir Tweeter, también). */
+  private cambioVisto = this.publicacionesService.ultimoCambio();
 
   /**
-   * El listado se conserva mientras se publica en la otra pantalla de
-   * Tweeter. Cuando se crea una publicación, vuelve a la primera página de
-   * las más nuevas para mostrarla.
+   * El listado se conserva mientras se usa otra pantalla de Tweeter u otra
+   * app, así que sigue los cambios hechos desde cualquier lado: una
+   * publicación nueva lleva a la primera página de las más nuevas, un me
+   * gusta o un comentario actualizan la tarjeta y una baja recarga la página.
    */
-  private readonly mostrarLoPublicado = effect(() => {
-    const publicadas = this.publicacionesService.publicadas();
-    if (publicadas === this.publicadasVistas) return;
-    this.publicadasVistas = publicadas;
-    untracked(() => {
-      if (this.orden.value === 'fecha') void this.irAPagina(1, true);
-      else this.orden.setValue('fecha');
-    });
+  private readonly seguirCambios = effect(() => {
+    const cambio = this.publicacionesService.ultimoCambio();
+    if (!cambio || cambio === this.cambioVisto) return;
+    this.cambioVisto = cambio;
+    untracked(() => this.aplicarCambio(cambio));
   });
 
   ngOnInit(): void {
@@ -86,17 +89,37 @@ export class Listado implements OnInit, OnDestroy {
 
   /** Reemplaza la publicación por la copia que vuelve (aunque no cambie), así la tarjeta libera el botón. */
   protected async alternarMeGusta(publicacion: Publicacion): Promise<void> {
-    const actualizada = await this.publicacionesService.alternarMeGusta(publicacion);
-    this.publicaciones.update((publicaciones) =>
-      publicaciones.map((otra) => (otra._id === publicacion._id ? actualizada : otra)),
-    );
+    this.reemplazar(await this.publicacionesService.alternarMeGusta(publicacion));
   }
 
-  /** Borra la publicación y recarga la página; si quedó vacía, vuelve a la anterior. */
+  /** La página se recarga al seguir el cambio (`seguirCambios`). */
   protected async eliminar(publicacion: Publicacion): Promise<void> {
-    if (!(await this.publicacionesService.eliminar(publicacion._id))) return;
-    const quedaVacia = this.publicaciones().length === 1 && this.pagina() > 1;
-    await this.irAPagina(quedaVacia ? this.pagina() - 1 : this.pagina(), true);
+    await this.publicacionesService.eliminar(publicacion);
+  }
+
+  private aplicarCambio({ tipo, publicacion }: CambioPublicacion): void {
+    switch (tipo) {
+      case 'creada':
+        if (this.orden.value === 'fecha') void this.irAPagina(1, true);
+        else this.orden.setValue('fecha');
+        break;
+      case 'actualizada':
+        this.reemplazar(publicacion);
+        break;
+      case 'eliminada': {
+        // Si era la única de una página que no es la primera, va a la anterior.
+        const quedaVacia =
+          this.pagina() > 1 && this.publicaciones().every(({ _id }) => _id === publicacion._id);
+        void this.irAPagina(quedaVacia ? this.pagina() - 1 : this.pagina(), true);
+        break;
+      }
+    }
+  }
+
+  private reemplazar(actualizada: Publicacion): void {
+    this.publicaciones.update((publicaciones) =>
+      publicaciones.map((otra) => (otra._id === actualizada._id ? actualizada : otra)),
+    );
   }
 
   private async cargar(): Promise<void> {
