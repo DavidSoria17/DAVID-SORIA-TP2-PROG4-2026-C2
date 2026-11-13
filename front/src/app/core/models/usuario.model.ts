@@ -43,3 +43,30 @@ export interface DatosRegistro {
   descripcion: string;
   imagen: File | null;
 }
+
+/** Alta hecha por un administrador: los datos del registro y el perfil elegido. */
+export interface DatosAltaUsuario extends DatosRegistro {
+  perfil: Perfil;
+}
+
+/** Usuario del listado de administración, con cuántas publicaciones activas tiene. */
+export interface UsuarioListado extends Usuario {
+  cantidadPublicaciones: number;
+}
+
+/** Filtro del listado de administración; sin valor, todos. */
+export type EstadoUsuarios = 'habilitados' | 'deshabilitados';
+
+export interface FiltrosUsuarios {
+  estado: EstadoUsuarios | null;
+  offset: number;
+  limit: number;
+}
+
+export interface PaginaUsuarios {
+  usuarios: UsuarioListado[];
+  /** Cantidad que cumple el filtro. */
+  total: number;
+  /** Cuántos hay de cada estado, sin importar el filtro. */
+  cantidades: { todos: number; habilitados: number; deshabilitados: number };
+}

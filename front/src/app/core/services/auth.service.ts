@@ -10,6 +10,7 @@ import {
   Usuario,
 } from '../models/usuario.model';
 import { SIN_TOKEN } from '../utils/http.constants';
+import { formDataDeUsuario } from '../utils/usuarios.utils';
 
 const CLAVE_TOKEN = 'token';
 const CLAVE_USUARIO = 'usuario';
@@ -31,6 +32,7 @@ export class AuthService {
   /** Token de la sesión guardada, o `null` si no hay sesión. Lo usan `tokenInterceptor` y `SesionService`. */
   readonly token = this.tokenSesion.asReadonly();
   readonly haySesion = computed(() => this.usuarioSesion() !== null);
+  readonly esAdmin = computed(() => this.usuarioSesion()?.perfil === 'administrador');
 
   /**
    * Inicia sesión con correo o nombre de usuario y guarda la sesión.
@@ -51,7 +53,7 @@ export class AuthService {
     const respuesta = await firstValueFrom(
       this.http.post<RespuestaAuth>(
         `${this.urlAuth}/registro`,
-        this.armarFormData(datos),
+        formDataDeUsuario(datos),
         this.sinToken,
       ),
     );
@@ -108,15 +110,5 @@ export class AuthService {
   private leerUsuarioGuardado(): Usuario | null {
     const guardado = localStorage.getItem(CLAVE_USUARIO);
     return guardado ? (JSON.parse(guardado) as Usuario) : null;
-  }
-
-  private armarFormData({ imagen, descripcion, ...campos }: DatosRegistro): FormData {
-    const formData = new FormData();
-    for (const [campo, valor] of Object.entries(campos)) {
-      formData.append(campo, valor);
-    }
-    if (descripcion.trim()) formData.append('descripcion', descripcion);
-    if (imagen) formData.append('imagen', imagen);
-    return formData;
   }
 }

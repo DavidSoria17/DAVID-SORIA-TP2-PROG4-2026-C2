@@ -1,0 +1,68 @@
+.selector-orden small {
+  font-size: var(--texto-2xs);
+}
+
+.usuario {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  min-width: 190px;
+}
+
+.usuario strong {
+  display: block;
+  font-weight: var(--peso-medio);
+}
+
+.usuario small {
+  display: block;
+  white-space: nowrap;
+  font-family: var(--fuente-sistema);
+  font-size: var(--texto-xs);
+  color: var(--color-texto-secundario);
+}
+
+.numero {
+  font-family: var(--fuente-sistema);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.acciones {
+  white-space: nowrap;
+  text-align: right;
+}
+
+.nota {
+  font-family: var(--fuente-sistema);
+  font-size: var(--texto-xs);
+  color: var(--color-texto-secundario);
+}
+
+.deshabilitada td {
+  color: var(--color-texto-secundario);
+}
+
+.deshabilitada app-avatar {
+  filter: grayscale(1);
+  opacity: 0.7;
+}
+
+.deshabilitada td:first-child {
+  box-shadow: inset 4px 0 0 var(--color-peligro);
+}
+
+.paginador {
+  display: block;
+  margin-top: var(--espacio-4);
+}
+
+@container escritorio (max-width: 640px) {
+  .acciones {
+    text-align: left;
+  }
+
+  .acciones .boton {
+    width: 100%;
+  }
+}

@@ -6,7 +6,7 @@
 />
 <div>
   <div class="cabecera">
-    <span class="autor">{{ '@' + datos.autor.nombreUsuario }}</span>
+    <span class="autor">{{ datos.autor.nombreUsuario | arroba }}</span>
     <time class="fecha" [attr.datetime]="datos.createdAt">
       {{ datos.createdAt | tiempoRelativo }}
     </time>

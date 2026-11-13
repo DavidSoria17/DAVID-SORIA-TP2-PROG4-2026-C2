@@ -4,10 +4,11 @@ import { AuthService } from '../../../core/services/auth.service';
 import { NotificacionService } from '../../../core/services/notificacion.service';
 import { Avatar } from '../../../shared/components/avatar/avatar';
 import { EstadoVacio } from '../../../shared/components/estado-vacio/estado-vacio';
+import { ArrobaPipe } from '../../../shared/pipes/arroba/arroba';
 
 @Component({
   selector: 'app-cerrar-sesion',
-  imports: [Avatar, EstadoVacio, RouterLink],
+  imports: [ArrobaPipe, Avatar, EstadoVacio, RouterLink],
   templateUrl: './cerrar-sesion.html',
   styleUrl: './cerrar-sesion.css',
 })

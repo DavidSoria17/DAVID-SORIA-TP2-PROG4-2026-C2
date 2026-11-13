@@ -1,0 +1,92 @@
+.torta {
+  display: grid;
+  grid-template-columns: 168px minmax(0, 1fr);
+  gap: var(--espacio-4);
+  align-items: center;
+}
+
+.dibujo {
+  position: relative;
+  width: 168px;
+  height: 168px;
+}
+
+.dibujo svg {
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+.centro {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  font-family: var(--fuente-sistema);
+  font-size: var(--texto-2xs);
+  color: var(--color-texto-secundario);
+  text-align: center;
+  pointer-events: none;
+}
+
+.centro b {
+  display: block;
+  font-family: var(--fuente-sistema-titulo);
+  font-size: var(--texto-xl);
+  font-weight: var(--peso-normal);
+  color: var(--color-texto);
+}
+
+.leyenda {
+  display: grid;
+  gap: var(--espacio-1);
+  margin: 0;
+  padding: 0;
+  font-size: var(--texto-xs);
+  list-style: none;
+}
+
+.leyenda li {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--espacio-2);
+}
+
+.muestra {
+  width: 12px;
+  height: 12px;
+  background: var(--muestra);
+  border: var(--borde-fino) solid var(--color-borde);
+}
+
+.nombre {
+  overflow: hidden;
+  font-family: var(--fuente-contenido);
+  color: var(--color-texto);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.valor {
+  font-family: var(--fuente-sistema);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-texto-secundario);
+}
+
+.numero {
+  font-family: var(--fuente-sistema);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+@container escritorio (max-width: 640px) {
+  .torta {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+
+  .leyenda {
+    width: 100%;
+  }
+}

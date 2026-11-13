@@ -6,6 +6,7 @@ import { Comentario as DatosComentario } from '../../../core/models/comentario.m
 import { CambioPublicacion, Publicacion } from '../../../core/models/publicacion.model';
 import { AuthService } from '../../../core/services/auth.service';
 import { mensajeDeError } from '../../../core/utils/errores.utils';
+import { reemplazarPorId } from '../../../core/utils/listas.utils';
 import {
   COMENTARIOS_POR_PAGINA,
   LARGO_MAXIMO_COMENTARIO,
@@ -58,7 +59,10 @@ export class Detalle implements OnInit, OnDestroy {
   private readonly ruta = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
-  protected readonly usuario = inject(AuthService).usuario;
+  private readonly authService = inject(AuthService);
+  protected readonly usuario = this.authService.usuario;
+  /** Un administrador puede dar de baja cualquier publicación. */
+  protected readonly esAdmin = this.authService.esAdmin;
   protected readonly largoMaximoComentario = LARGO_MAXIMO_COMENTARIO;
 
   protected readonly publicacion = signal<Publicacion | null>(null);
@@ -190,9 +194,7 @@ export class Detalle implements OnInit, OnDestroy {
         comentario,
         this.edicion.getRawValue().mensaje,
       );
-      this.comentarios.update((comentarios) =>
-        comentarios.map((otro) => (otro._id === editado._id ? editado : otro)),
-      );
+      this.comentarios.update((comentarios) => reemplazarPorId(comentarios, editado));
       this.editando.set(null);
     } catch (error) {
       this.errorEdicion.set(mensajeDeError(error));

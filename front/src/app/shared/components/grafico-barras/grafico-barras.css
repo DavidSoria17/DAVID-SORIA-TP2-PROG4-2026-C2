@@ -1,0 +1,120 @@
+.barras {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fila,
+.eje {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr) 28px;
+  gap: var(--espacio-2);
+}
+
+.fila {
+  align-items: center;
+}
+
+.etiqueta {
+  overflow: hidden;
+  font-family: var(--fuente-sistema);
+  font-size: var(--texto-xs);
+  color: var(--color-texto);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.pista {
+  position: relative;
+  height: 16px;
+  /* guías verticales cada 25 % */
+  background: linear-gradient(90deg, var(--color-grafico-grilla) 1px, transparent 1px) 0 0 / 25%
+    100%;
+}
+
+.barra {
+  display: block;
+  width: var(--valor);
+  height: 100%;
+  background: var(--color-grafico-1);
+  box-shadow: 2px 2px 0 0 var(--color-sombra);
+}
+
+.fila--resaltada .barra {
+  background: var(--color-acento-hover);
+  outline: 2px solid var(--color-foco);
+  outline-offset: 1px;
+}
+
+.fila:focus-visible {
+  outline-offset: 2px;
+}
+
+.valor {
+  font-family: var(--fuente-sistema);
+  font-size: var(--texto-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-texto);
+  text-align: right;
+}
+
+.eje {
+  margin-top: var(--espacio-1);
+  font-family: var(--fuente-sistema);
+  font-size: var(--texto-2xs);
+  color: var(--color-grafico-eje);
+}
+
+.eje span:nth-child(2) {
+  display: flex;
+  justify-content: space-between;
+}
+
+.detalle {
+  position: absolute;
+  top: -4px;
+  left: calc(var(--valor) + 12px);
+  z-index: var(--capa-menu);
+  display: grid;
+  gap: 2px;
+  padding: var(--espacio-1) var(--espacio-2);
+  font-family: var(--fuente-sistema);
+  font-size: var(--texto-xs);
+  color: var(--color-texto);
+  white-space: nowrap;
+  background: var(--color-ventana);
+  border: var(--borde-control);
+  box-shadow: var(--sombra-aviso);
+  pointer-events: none;
+}
+
+.detalle--izquierda {
+  right: calc(100% - var(--valor) + 12px);
+  left: auto;
+}
+
+.detalle b {
+  font-size: var(--texto-sm);
+  font-weight: var(--peso-normal);
+  color: var(--color-texto);
+}
+
+.detalle small {
+  font-size: var(--texto-2xs);
+  color: var(--color-texto-secundario);
+}
+
+.numero {
+  font-family: var(--fuente-sistema);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+@container escritorio (max-width: 640px) {
+  .fila,
+  .eje {
+    grid-template-columns: 84px minmax(0, 1fr) 24px;
+  }
+}

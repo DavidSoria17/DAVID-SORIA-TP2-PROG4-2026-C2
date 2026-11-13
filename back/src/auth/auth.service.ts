@@ -33,7 +33,7 @@ export class AuthService {
     datos: CrearUsuarioDto,
     imagen?: Express.Multer.File,
   ): Promise<RespuestaAuth> {
-    const usuario = await this.usuariosService.crear(datos, imagen);
+    const usuario = await this.usuariosService.crear(datos, 'usuario', imagen);
     return { usuario, token: this.firmarToken(usuario) };
   }
 

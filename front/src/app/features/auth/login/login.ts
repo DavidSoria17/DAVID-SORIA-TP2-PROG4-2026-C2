@@ -1,3 +1,4 @@
+import { HttpErrorResponse, HttpStatusCode } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -8,6 +9,7 @@ import { contrasenaSegura } from '../../../core/validators/formularios.validator
 import { Aviso } from '../../../shared/components/aviso/aviso';
 import { CampoContrasena } from '../../../shared/components/campo-contrasena/campo-contrasena';
 import { CampoFormulario } from '../../../shared/components/campo-formulario/campo-formulario';
+import { Modal } from '../../../shared/components/modal/modal';
 import { NgOptimizedImage } from '@angular/common';
 
 @Component({
@@ -16,6 +18,7 @@ import { NgOptimizedImage } from '@angular/common';
     Aviso,
     CampoContrasena,
     CampoFormulario,
+    Modal,
     NgOptimizedImage,
     ReactiveFormsModule,
     RouterLink,
@@ -30,6 +33,8 @@ export class Login {
 
   protected readonly enviando = signal(false);
   protected readonly errorServidor = signal<string | null>(null);
+  /** Un administrador deshabilitó la cuenta: se avisa con un modal en vez de un error del formulario. */
+  protected readonly cuentaDeshabilitada = signal(false);
 
   protected readonly formulario = new FormGroup({
     usuario: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
@@ -51,7 +56,11 @@ export class Login {
       this.notificacionService.mostrar({ tipo: 'exito', titulo: `¡Hola, ${usuario.nombre}!` });
       await this.router.navigate(['/']);
     } catch (error) {
-      this.errorServidor.set(mensajeDeError(error));
+      if (error instanceof HttpErrorResponse && error.status === HttpStatusCode.Forbidden) {
+        this.cuentaDeshabilitada.set(true);
+      } else {
+        this.errorServidor.set(mensajeDeError(error));
+      }
     } finally {
       this.enviando.set(false);
     }

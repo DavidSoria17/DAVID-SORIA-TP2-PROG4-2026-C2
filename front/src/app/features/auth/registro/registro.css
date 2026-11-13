@@ -2,23 +2,6 @@
   font-size: var(--texto-xl);
 }
 
-.grilla {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--espacio-4) var(--espacio-5);
-}
-
-.ocupa-todo {
-  grid-column: 1 / -1;
-}
-
-.contador {
-  align-self: flex-end;
-  font-family: var(--fuente-sistema);
-  font-size: var(--texto-2xs);
-  color: var(--color-texto-secundario);
-}
-
 .acciones {
   display: flex;
   flex-wrap: wrap;
@@ -30,10 +13,6 @@
 }
 
 @container escritorio (max-width: 640px) {
-  .grilla {
-    grid-template-columns: 1fr;
-  }
-
   .acciones {
     flex-direction: column-reverse;
     align-items: stretch;

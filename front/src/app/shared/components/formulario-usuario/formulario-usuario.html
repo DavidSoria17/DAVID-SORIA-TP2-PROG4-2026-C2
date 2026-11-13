@@ -1,0 +1,144 @@
+@let id = prefijo();
+<form class="pila" [formGroup]="formulario" (ngSubmit)="enviarSiValido()">
+  <ng-content select="[encabezado]" />
+
+  <div class="grilla">
+    <app-campo-formulario etiqueta="Nombre" [para]="id + '-nombre'">
+      <input
+        class="control"
+        type="text"
+        autocomplete="given-name"
+        [id]="id + '-nombre'"
+        formControlName="nombre"
+      />
+    </app-campo-formulario>
+
+    <app-campo-formulario etiqueta="Apellido" [para]="id + '-apellido'">
+      <input
+        class="control"
+        type="text"
+        autocomplete="family-name"
+        [id]="id + '-apellido'"
+        formControlName="apellido"
+      />
+    </app-campo-formulario>
+
+    <app-campo-formulario etiqueta="Correo electrónico" [para]="id + '-correo'">
+      <input
+        class="control"
+        type="email"
+        autocomplete="email"
+        [id]="id + '-correo'"
+        formControlName="correo"
+      />
+    </app-campo-formulario>
+
+    <app-campo-formulario
+      etiqueta="Nombre de usuario"
+      ayuda="Así te van a encontrar: letras, números, punto y guion bajo."
+      [para]="id + '-usuario'"
+    >
+      <input
+        class="control"
+        type="text"
+        autocomplete="username"
+        [id]="id + '-usuario'"
+        formControlName="nombreUsuario"
+      />
+    </app-campo-formulario>
+
+    <app-campo-formulario etiqueta="Contraseña" [para]="id + '-contrasena'">
+      <app-campo-contrasena
+        autocompletar="new-password"
+        [idControl]="id + '-contrasena'"
+        [mostrarRequisitos]="true"
+        formControlName="contrasena"
+      />
+    </app-campo-formulario>
+
+    <app-campo-formulario
+      etiqueta="Repetir contraseña"
+      errorDelGrupo="coincidencia"
+      [para]="id + '-repetir'"
+    >
+      <app-campo-contrasena
+        autocompletar="new-password"
+        [idControl]="id + '-repetir'"
+        formControlName="repetirContrasena"
+      />
+    </app-campo-formulario>
+
+    <app-campo-formulario etiqueta="Fecha de nacimiento" [para]="id + '-nacimiento'">
+      <input
+        class="control"
+        type="text"
+        placeholder="DD/MM/AAAA"
+        autocomplete="bday"
+        appFechaMask
+        [id]="id + '-nacimiento'"
+        formControlName="fechaNacimiento"
+      />
+    </app-campo-formulario>
+
+    <app-campo-formulario
+      etiqueta="Descripción breve"
+      [para]="id + '-descripcion'"
+      [opcional]="true"
+    >
+      <textarea
+        class="control"
+        rows="3"
+        [id]="id + '-descripcion'"
+        [maxLength]="largoMaximoDescripcion"
+        formControlName="descripcion"
+      ></textarea>
+      <span class="contador" aria-live="polite">
+        {{ formulario.controls.descripcion.value.length }}/{{ largoMaximoDescripcion }}
+      </span>
+    </app-campo-formulario>
+
+    @if (conPerfil()) {
+      <fieldset class="grupo-radios ocupa-todo">
+        <legend>Perfil del nuevo usuario</legend>
+        <div class="opciones-perfil">
+          <label class="opcion-perfil">
+            <span class="radio">
+              <input type="radio" value="usuario" formControlName="perfil" />
+            </span>
+            <span class="opcion-perfil__titulo">
+              <app-icono nombre="usuario" />
+              Usuario
+            </span>
+            <span class="opcion-perfil__texto">
+              Puede publicar, dar me gusta, comentar y editar su perfil.
+            </span>
+          </label>
+          <label class="opcion-perfil">
+            <span class="radio">
+              <input type="radio" value="administrador" formControlName="perfil" />
+            </span>
+            <span class="opcion-perfil__titulo">
+              <app-icono nombre="corona" />
+              Administrador
+            </span>
+            <span class="opcion-perfil__texto">
+              Además entra al dashboard, gestiona usuarios y puede dar de baja cualquier
+              publicación.
+            </span>
+          </label>
+        </div>
+      </fieldset>
+    }
+
+    <app-campo-formulario
+      class="ocupa-todo"
+      etiqueta="Imagen de perfil"
+      [para]="id + '-imagen'"
+      [opcional]="true"
+    >
+      <app-campo-imagen [idControl]="id + '-imagen'" formControlName="imagen" />
+    </app-campo-formulario>
+  </div>
+
+  <ng-content />
+</form>

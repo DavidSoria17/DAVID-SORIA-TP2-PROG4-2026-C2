@@ -19,6 +19,7 @@ import {
   Posicion,
   Tamano,
 } from '../../../core/models/interfaz.model';
+import { limitar } from '../../../core/utils/numeros.utils';
 import {
   ALTO_MINIMO_VENTANA,
   ANCHO_MINIMO_VENTANA,
@@ -35,9 +36,6 @@ interface InicioRedimension {
   posicion: Posicion;
   escritorio: Tamano;
 }
-
-const limitar = (valor: number, minimo: number, maximo: number) =>
-  Math.min(Math.max(valor, minimo), maximo);
 
 /** Lleva la ventana a un lugar desde donde se la pueda volver a agarrar. */
 const posicionVisible = (posicion: Posicion, ancho: number, escritorio: Tamano): Posicion => ({

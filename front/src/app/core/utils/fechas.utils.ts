@@ -1,3 +1,5 @@
+import { LapsoRapido, RangoFechas } from '../models/estadistica.model';
+
 const FORMATO_FECHA = /^(\d{2})\/(\d{2})\/(\d{4})$/;
 const dosDigitos = (numero: number) => String(numero).padStart(2, '0');
 
@@ -58,4 +60,60 @@ export function tiempoRelativo(fecha: Date, ahora: Date): string {
     return `${dosDigitos(fecha.getDate())}/${dosDigitos(fecha.getMonth() + 1)}/${fecha.getFullYear()}`;
   }
   return diaYHora(fecha, ahora);
+}
+
+/** Fecha AAAA-MM-DD a las 00:00 UTC, para hacer cuentas de días sin que influya la hora local. */
+const fechaIsoADate = (fechaIso: string): Date => new Date(`${fechaIso}T00:00:00Z`);
+const dateAFechaIso = (fecha: Date): string => fecha.toISOString().slice(0, 10);
+
+/** AAAA-MM-DD a DD/MM/AAAA, el formato de los campos de fecha. */
+export function fechaIsoATexto(fechaIso: string): string {
+  const [anio, mes, dia] = fechaIso.split('-');
+  return `${dia}/${mes}/${anio}`;
+}
+
+/** AAAA-MM-DD a «28/9», el formato corto de los ejes de los gráficos. */
+export function fechaIsoCorta(fechaIso: string): string {
+  const [, mes, dia] = fechaIso.split('-');
+  return `${Number(dia)}/${Number(mes)}`;
+}
+
+/** Suma (o resta, con un número negativo) días a una fecha AAAA-MM-DD. */
+export function sumarDias(fechaIso: string, dias: number): string {
+  const fecha = fechaIsoADate(fechaIso);
+  fecha.setUTCDate(fecha.getUTCDate() + dias);
+  return dateAFechaIso(fecha);
+}
+
+/** Cuántos días abarca un lapso, contando el primero y el último. */
+export function diasDelLapso({ desde, hasta }: RangoFechas): number {
+  return Math.round((fechaIsoADate(hasta).getTime() - fechaIsoADate(desde).getTime()) / DIA_MS) + 1;
+}
+
+/** Cada día del lapso, en orden, como AAAA-MM-DD. */
+export function listarDias(rango: RangoFechas): string[] {
+  return Array.from({ length: diasDelLapso(rango) }, (_, indice) => sumarDias(rango.desde, indice));
+}
+
+/** Lapso del mismo largo que termina el día anterior a `desde`, para comparar. */
+export function lapsoAnterior(rango: RangoFechas): RangoFechas {
+  const hasta = sumarDias(rango.desde, -1);
+  return { desde: sumarDias(hasta, 1 - diasDelLapso(rango)), hasta };
+}
+
+/** Lapso de un atajo del filtro, que termina en `hoy` (AAAA-MM-DD). */
+export function lapsoRapido(lapso: LapsoRapido, hoy: string): RangoFechas {
+  switch (lapso) {
+    case '7-dias':
+      return { desde: sumarDias(hoy, -6), hasta: hoy };
+    case '30-dias':
+      return { desde: sumarDias(hoy, -29), hasta: hoy };
+    case '3-meses': {
+      const desde = fechaIsoADate(hoy);
+      desde.setUTCMonth(desde.getUTCMonth() - 3);
+      return { desde: sumarDias(dateAFechaIso(desde), 1), hasta: hoy };
+    }
+    case 'este-anio':
+      return { desde: `${hoy.slice(0, 4)}-01-01`, hasta: hoy };
+  }
 }

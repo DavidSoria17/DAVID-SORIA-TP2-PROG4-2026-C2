@@ -1,7 +1,12 @@
-@if (urlImagen(); as url) {
-  <img [src]="url" [alt]="'Foto de perfil de @' + nombreUsuario()" />
+@if (mostrarFoto()) {
+  <img
+    [src]="urlImagen()"
+    [alt]="'Foto de perfil de ' + (nombreUsuario() | arroba)"
+    appImagenRespaldo
+    (sinImagen)="fotoRota.set(true)"
+  />
 } @else {
-  <span class="solo-lectores">{{ '@' + nombreUsuario() }} no tiene foto de perfil</span>
+  <span class="solo-lectores">{{ nombreUsuario() | arroba }} no tiene foto de perfil</span>
   <app-icono class="silueta" nombre="usuario" [escala]="escalaSilueta()" />
   <span class="inicial" aria-hidden="true">{{ inicial() }}</span>
 }

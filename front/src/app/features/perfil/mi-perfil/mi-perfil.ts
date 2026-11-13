@@ -6,6 +6,7 @@ import { Publicacion } from '../../../core/models/publicacion.model';
 import { Usuario } from '../../../core/models/usuario.model';
 import { AuthService } from '../../../core/services/auth.service';
 import { mensajeDeError } from '../../../core/utils/errores.utils';
+import { reemplazarPorId } from '../../../core/utils/listas.utils';
 import {
   COMENTARIOS_EN_PERFIL,
   PUBLICACIONES_EN_PERFIL,
@@ -14,7 +15,10 @@ import { Avatar } from '../../../shared/components/avatar/avatar';
 import { Aviso } from '../../../shared/components/aviso/aviso';
 import { Comentario } from '../../../shared/components/comentario/comentario';
 import { EstadoVacio } from '../../../shared/components/estado-vacio/estado-vacio';
+import { Icono } from '../../../shared/components/icono/icono';
 import { PublicacionCard } from '../../../shared/components/publicacion-card/publicacion-card';
+import { SiAdminDirective } from '../../../shared/directives/si-admin/si-admin';
+import { ArrobaPipe } from '../../../shared/pipes/arroba/arroba';
 import { PublicacionesService } from '../../publicaciones/services/publicaciones.service';
 import { PerfilService } from '../services/perfil.service';
 
@@ -26,7 +30,18 @@ import { PerfilService } from '../services/perfil.service';
  */
 @Component({
   selector: 'app-mi-perfil',
-  imports: [Avatar, Aviso, Comentario, DatePipe, EstadoVacio, PublicacionCard, RouterLink],
+  imports: [
+    ArrobaPipe,
+    Avatar,
+    Aviso,
+    Comentario,
+    DatePipe,
+    EstadoVacio,
+    Icono,
+    PublicacionCard,
+    RouterLink,
+    SiAdminDirective,
+  ],
   templateUrl: './mi-perfil.html',
   styleUrl: './mi-perfil.css',
 })
@@ -51,9 +66,7 @@ export class MiPerfil implements OnInit {
 
   protected async alternarMeGusta(publicacion: Publicacion): Promise<void> {
     const actualizada = await this.publicacionesService.alternarMeGusta(publicacion);
-    this.publicaciones.update((publicaciones) =>
-      publicaciones.map((otra) => (otra._id === publicacion._id ? actualizada : otra)),
-    );
+    this.publicaciones.update((publicaciones) => reemplazarPorId(publicaciones, actualizada));
   }
 
   /** Borra la publicación y vuelve a traer las últimas, así entra la siguiente más vieja. */

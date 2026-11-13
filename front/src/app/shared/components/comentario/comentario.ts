@@ -1,5 +1,6 @@
 import { Component, input, output } from '@angular/core';
 import { Comentario as DatosComentario } from '../../../core/models/comentario.model';
+import { ArrobaPipe } from '../../pipes/arroba/arroba';
 import { TiempoRelativoPipe } from '../../pipes/tiempo-relativo/tiempo-relativo';
 import { Avatar } from '../avatar/avatar';
 import { Icono } from '../icono/icono';
@@ -10,7 +11,7 @@ import { Icono } from '../icono/icono';
  */
 @Component({
   selector: 'app-comentario',
-  imports: [Avatar, Icono, TiempoRelativoPipe],
+  imports: [ArrobaPipe, Avatar, Icono, TiempoRelativoPipe],
   templateUrl: './comentario.html',
   styleUrl: './comentario.css',
   host: { role: 'listitem' },

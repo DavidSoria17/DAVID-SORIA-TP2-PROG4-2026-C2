@@ -34,7 +34,7 @@
       <app-publicacion-card
         [publicacion]="publicacion"
         [propia]="publicacion.autor._id === sesion._id"
-        [eliminable]="publicacion.autor._id === sesion._id"
+        [eliminable]="publicacion.autor._id === sesion._id || esAdmin()"
         [enlace]="'/publicaciones/' + publicacion._id"
         (alternarMeGusta)="alternarMeGusta(publicacion)"
         (eliminar)="eliminar(publicacion)"

@@ -1,0 +1,168 @@
+<h1 class="solo-lectores">Dashboard: estadísticas</h1>
+<app-pestanas etiqueta="Secciones del dashboard" [pestanas]="pestanas" />
+
+<div class="seccion-cuerpo">
+  <form
+    class="filtro-lapso"
+    aria-label="Lapso de tiempo"
+    [formGroup]="filtro"
+    (ngSubmit)="aplicar()"
+  >
+    <div class="campo-lapso">
+      <span class="etiqueta" id="lapso-rapido">Lapso rápido</span>
+      <div class="chips" role="group" aria-labelledby="lapso-rapido">
+        @for (opcion of lapsos; track opcion.lapso) {
+          <button
+            class="chip"
+            type="button"
+            [attr.aria-pressed]="lapsoActivo() === opcion.lapso"
+            (click)="elegirLapso(opcion.lapso)"
+          >
+            {{ opcion.etiqueta }}
+          </button>
+        }
+      </div>
+    </div>
+    <app-campo-formulario class="fecha" etiqueta="Desde" para="lapso-desde">
+      <input
+        class="control"
+        id="lapso-desde"
+        type="text"
+        placeholder="DD/MM/AAAA"
+        appFechaMask
+        formControlName="desde"
+      />
+    </app-campo-formulario>
+    <app-campo-formulario class="fecha" etiqueta="Hasta" para="lapso-hasta" errorDelGrupo="rango">
+      <input
+        class="control"
+        id="lapso-hasta"
+        type="text"
+        placeholder="DD/MM/AAAA"
+        appFechaMask
+        formControlName="hasta"
+      />
+    </app-campo-formulario>
+    <button class="boton boton--primario aplicar" type="submit">Aplicar</button>
+    <p class="resumen-lapso">Mostrando {{ lapsoCompleto() }} · se aplica a los tres gráficos</p>
+  </form>
+
+  @if (error(); as mensaje) {
+    <app-aviso
+      class="error"
+      tipo="peligro"
+      titulo="No pudimos cargar las estadísticas"
+      [texto]="mensaje"
+      (cerrar)="error.set(null)"
+    />
+  }
+
+  @if (cifras(); as cifra) {
+    <div class="cifras">
+      <div class="cifra">
+        <span class="cifra__etiqueta">
+          <app-icono nombre="mas" [escala]="1" />
+          Publicaciones
+        </span>
+        <span class="cifra__valor">{{ cifra.publicaciones }}</span>
+        <span class="cifra__delta" [class.cifra__delta--baja]="cifra.variacionPublicaciones.baja">
+          <b>{{ cifra.variacionPublicaciones.texto }}</b>
+          vs. los {{ dias() }} días anteriores
+        </span>
+      </div>
+      <div class="cifra">
+        <span class="cifra__etiqueta">
+          <app-icono nombre="comentario" [escala]="1" />
+          Comentarios
+        </span>
+        <span class="cifra__valor">{{ cifra.comentarios }}</span>
+        <span class="cifra__delta" [class.cifra__delta--baja]="cifra.variacionComentarios.baja">
+          <b>{{ cifra.variacionComentarios.texto }}</b>
+          vs. los {{ dias() }} días anteriores
+        </span>
+      </div>
+      <div class="cifra">
+        <span class="cifra__etiqueta">
+          <app-icono nombre="usuarios" [escala]="1" />
+          Usuarios que publicaron
+        </span>
+        <span class="cifra__valor">{{ cifra.autores }}</span>
+        <span class="cifra__delta">de {{ cifra.registrados }} registrados</span>
+      </div>
+    </div>
+
+    <div class="graficos">
+      <app-panel-grafico
+        #panelBarras
+        titulo="Publicaciones por usuario"
+        icono="graficoBarras"
+        [subtitulo]="'Barras · ' + lapsoCorto()"
+      >
+        @if (barras().length > 0) {
+          <app-grafico-barras
+            [datos]="barras()"
+            [unidad]="['publicación', 'publicaciones']"
+            [columnas]="['Usuario', 'Publicaciones']"
+            [comoTabla]="panelBarras.comoTabla()"
+          />
+        } @else {
+          <div class="panel-estado"><p>No hubo publicaciones en este lapso.</p></div>
+        }
+        <span pie>
+          {{ cantidadCon(cifra.publicaciones, 'publicación', 'publicaciones') }} de
+          {{ cantidadCon(cifra.autores, 'usuario', 'usuarios') }}
+        </span>
+      </app-panel-grafico>
+
+      <app-panel-grafico
+        #panelTorta
+        titulo="Comentarios por publicación"
+        icono="graficoTorta"
+        [subtitulo]="
+          'Torta · ' + lapsoCorto() + ' · las ' + porciones().length + ' con más comentarios'
+        "
+      >
+        @if (porciones().length > 0) {
+          <app-grafico-torta
+            unidad="comentarios"
+            [datos]="porciones()"
+            [resto]="otras()"
+            [columnas]="['Publicación', 'Comentarios']"
+            [comoTabla]="panelTorta.comoTabla()"
+          />
+        } @else {
+          <div class="panel-estado"><p>No hubo comentarios en este lapso.</p></div>
+        }
+        @if (otras().valor > 0) {
+          <span pie>Las demás se agrupan en «Otras publicaciones»</span>
+        }
+      </app-panel-grafico>
+
+      <app-panel-grafico
+        #panelLineas
+        class="ocupa-todo"
+        titulo="Comentarios realizados"
+        icono="graficoLineas"
+        [subtitulo]="'Líneas · comentarios por día · ' + lapsoCorto()"
+      >
+        <app-grafico-lineas
+          notaMaximo="el día con más actividad"
+          [datos]="lineas()"
+          [unidad]="['comentario', 'comentarios']"
+          [columnas]="['Día', 'Comentarios']"
+          [comoTabla]="panelLineas.comoTabla()"
+        />
+        <span pie>
+          {{ cantidadCon(cifra.comentarios, 'comentario', 'comentarios') }} en
+          {{ cantidadCon(dias(), 'día', 'días') }}
+        </span>
+        <span pie>promedio: {{ cifra.promedioComentarios }} por día</span>
+      </app-panel-grafico>
+    </div>
+  }
+</div>
+
+<footer class="seccion-estado">
+  <span>{{ lapsoCompleto() }}</span>
+  <span>solo administradores</span>
+</footer>

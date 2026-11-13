@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   Injectable,
@@ -6,18 +7,39 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import bcrypt from 'bcrypt';
-import { Model, mongo } from 'mongoose';
+import { Model, mongo, Types } from 'mongoose';
+import { PayloadToken } from '../common/interfaces/payload-token.interface.js';
 import { ImagenesService, ImagenSubida } from '../imagenes/imagenes.service.js';
+import { Publicacion } from '../publicaciones/entities/publicacion.entity.js';
 import { CrearUsuarioDto } from './dto/crear-usuario.dto.js';
-import { Usuario, UsuarioDocument } from './entities/usuario.entity.js';
+import { ListarUsuariosDto } from './dto/listar-usuarios.dto.js';
+import { Perfil, Usuario, UsuarioDocument } from './entities/usuario.entity.js';
 
 const RONDAS_BCRYPT = 10;
 const CODIGO_CLAVE_DUPLICADA = 11000;
+
+/** Usuario del listado de administración, con cuántas publicaciones activas tiene. */
+export type UsuarioListado = Usuario & {
+  _id: Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
+  cantidadPublicaciones: number;
+};
+
+export interface PaginaUsuarios {
+  usuarios: UsuarioListado[];
+  /** Cantidad que cumple el filtro, para armar la paginación. */
+  total: number;
+  /** Cuántos hay de cada estado, sin importar el filtro. */
+  cantidades: { todos: number; habilitados: number; deshabilitados: number };
+}
 
 @Injectable()
 export class UsuariosService {
   constructor(
     @InjectModel(Usuario.name) private readonly usuarioModel: Model<Usuario>,
+    @InjectModel(Publicacion.name)
+    private readonly publicacionModel: Model<Publicacion>,
     private readonly imagenesService: ImagenesService,
   ) {}
 
@@ -26,11 +48,13 @@ export class UsuariosService {
    * Lanza 409 si el correo o el nombre de usuario ya están en uso. Si la imagen
    * se subió y después falla el guardado, la borra de Cloudinary.
    * @param datos datos validados y normalizados del formulario
+   * @param perfil `usuario` en el registro; el que elija el administrador en un alta
    * @param imagen foto de perfil opcional, en memoria
    * @returns el usuario creado (sin contraseña al serializarse)
    */
   async crear(
     datos: CrearUsuarioDto,
+    perfil: Perfil,
     imagen?: Express.Multer.File,
   ): Promise<UsuarioDocument> {
     await this.verificarDisponibilidad(datos.correo, datos.nombreUsuario);
@@ -50,6 +74,7 @@ export class UsuariosService {
         fechaNacimiento: datos.fechaNacimiento,
         descripcion: datos.descripcion,
         urlImagen: imagenSubida?.url,
+        perfil,
       });
     } catch (error) {
       await this.descartarImagen(imagenSubida);
@@ -99,6 +124,97 @@ export class UsuariosService {
         'Tu cuenta está deshabilitada. Comunicate con un administrador',
       );
     }
+    return usuario;
+  }
+
+  /**
+   * Página de usuarios para el panel de administración, de los más nuevos a
+   * los más viejos. Cada uno trae cuántas publicaciones activas tiene (una
+   * sola consulta extra para toda la página).
+   * @param filtros estado opcional, `offset` y `limit`
+   */
+  async listar({
+    estado,
+    offset,
+    limit,
+  }: ListarUsuariosDto): Promise<PaginaUsuarios> {
+    const filtro = estado ? { activo: estado === 'habilitados' } : {};
+
+    const [usuarios, total, todos, deshabilitados] = await Promise.all([
+      this.usuarioModel
+        .find(filtro)
+        .sort({ _id: -1 })
+        .skip(offset)
+        .limit(limit)
+        .lean<Omit<UsuarioListado, 'cantidadPublicaciones'>[]>()
+        .exec(),
+      this.usuarioModel.countDocuments(filtro).exec(),
+      this.usuarioModel.countDocuments().exec(),
+      this.usuarioModel.countDocuments({ activo: false }).exec(),
+    ]);
+
+    const cantidades = await this.publicacionModel
+      .aggregate<{ _id: Types.ObjectId; cantidad: number }>([
+        {
+          $match: {
+            'autor._id': { $in: usuarios.map(({ _id }) => _id) },
+            activa: true,
+          },
+        },
+        { $group: { _id: '$autor._id', cantidad: { $sum: 1 } } },
+      ])
+      .exec();
+    const porUsuario = new Map(
+      cantidades.map(({ _id, cantidad }) => [_id.toString(), cantidad]),
+    );
+
+    return {
+      usuarios: usuarios.map((usuario) => ({
+        ...usuario,
+        cantidadPublicaciones: porUsuario.get(usuario._id.toString()) ?? 0,
+      })),
+      total,
+      cantidades: {
+        todos,
+        habilitados: todos - deshabilitados,
+        deshabilitados,
+      },
+    };
+  }
+
+  /**
+   * Baja lógica: el usuario deja de poder iniciar sesión. Un administrador no
+   * puede deshabilitarse a sí mismo (400); si el usuario no existe, 404.
+   * @param id usuario a deshabilitar
+   * @param sesion payload del token del administrador
+   * @returns el usuario actualizado
+   */
+  async deshabilitar(
+    id: Types.ObjectId,
+    sesion: PayloadToken,
+  ): Promise<UsuarioDocument> {
+    if (id.equals(sesion.sub)) {
+      throw new BadRequestException('No podés deshabilitar tu propia cuenta');
+    }
+    return this.cambiarEstado(id, false);
+  }
+
+  /**
+   * Alta lógica: el usuario vuelve a poder iniciar sesión. Si no existe, 404.
+   * @returns el usuario actualizado
+   */
+  habilitar(id: Types.ObjectId): Promise<UsuarioDocument> {
+    return this.cambiarEstado(id, true);
+  }
+
+  private async cambiarEstado(
+    id: Types.ObjectId,
+    activo: boolean,
+  ): Promise<UsuarioDocument> {
+    const usuario = await this.usuarioModel
+      .findByIdAndUpdate(id, { $set: { activo } }, { returnDocument: 'after' })
+      .exec();
+    if (!usuario) throw new NotFoundException('El usuario no existe');
     return usuario;
   }
 

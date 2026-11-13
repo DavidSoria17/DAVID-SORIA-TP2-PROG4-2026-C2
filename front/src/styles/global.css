@@ -123,6 +123,19 @@ router-outlet {
   width: 100%;
 }
 
+.boton--fantasma {
+  --boton-fondo: transparent;
+  --boton-fondo-hover: var(--color-acento-suave);
+  --boton-fondo-activo: var(--color-acento-suave);
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.boton--fantasma:hover {
+  border-color: var(--color-borde);
+  box-shadow: none;
+}
+
 .enlace {
   padding: 0;
   font-family: var(--fuente-sistema);
@@ -406,4 +419,176 @@ textarea.control {
   display: flex;
   justify-content: space-between;
   color: var(--color-texto-secundario);
+}
+
+/* ---------- Barra de herramientas de una pantalla ---------- */
+
+.barra-herramientas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-3);
+  margin-bottom: var(--espacio-4);
+  padding-bottom: var(--espacio-3);
+  border-bottom: var(--borde-separador);
+}
+
+/* ---------- Selector de orden: botones segmentados con radios ---------- */
+
+.selector-orden {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  font-family: var(--fuente-sistema);
+  font-size: var(--texto-xs);
+}
+
+.selector-orden__opciones {
+  display: inline-flex;
+  background: var(--color-ventana);
+  border: var(--borde-control);
+  box-shadow: var(--sombra-boton);
+}
+
+.selector-orden__opcion {
+  position: relative;
+}
+
+.selector-orden__opcion input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.selector-orden__opcion span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-1);
+  height: 30px;
+  padding: 0 var(--espacio-3);
+  font-size: var(--texto-sm);
+  color: var(--color-texto);
+  background: var(--color-secundario);
+  border-left: var(--borde-fino) solid var(--color-borde);
+}
+
+.selector-orden__opcion:first-child span {
+  border-left: 0;
+}
+
+.selector-orden__opcion:hover span {
+  background: var(--color-secundario-hover);
+}
+
+.selector-orden__opcion input:checked + span {
+  color: var(--color-texto-sobre-acento);
+  background: var(--color-acento);
+  box-shadow: var(--bisel-hundido);
+}
+
+.selector-orden__opcion input:focus-visible + span {
+  outline: var(--ancho-foco) var(--estilo-foco) var(--color-foco);
+  outline-offset: -5px;
+}
+
+@container escritorio (max-width: 640px) {
+  .barra-herramientas {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .barra-herramientas .boton {
+    width: 100%;
+  }
+
+  .barra-herramientas .selector-orden,
+  .barra-herramientas .selector-orden__opciones {
+    width: 100%;
+  }
+
+  .barra-herramientas .selector-orden__opcion {
+    flex: 1;
+  }
+
+  .barra-herramientas .selector-orden__opcion span {
+    justify-content: center;
+    width: 100%;
+    padding: 0 var(--espacio-1);
+    font-size: var(--texto-xs);
+  }
+}
+
+/* ---------- Insignias de perfil y estado ---------- */
+
+.insignia {
+  --insignia-color: var(--color-texto-secundario);
+  --insignia-fondo: var(--color-ventana-alterna);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-1);
+  padding: 1px var(--espacio-2);
+  font-family: var(--fuente-sistema);
+  font-size: var(--texto-xs);
+  line-height: 1.4;
+  white-space: nowrap;
+  color: var(--insignia-color);
+  background: var(--insignia-fondo);
+  border: var(--borde-fino) solid var(--insignia-color);
+}
+
+.insignia--admin {
+  --insignia-color: var(--color-acento);
+  --insignia-fondo: var(--color-acento-suave);
+}
+
+.insignia--habilitado {
+  --insignia-color: var(--color-exito);
+  --insignia-fondo: var(--color-exito-fondo);
+}
+
+.insignia--deshabilitado {
+  --insignia-color: var(--color-peligro);
+  --insignia-fondo: var(--color-peligro-fondo);
+  border-style: dashed;
+}
+
+/* ---------- Pantalla que arma su propio marco (pestañas, cuerpo y barra de estado) ---------- */
+
+.pantalla-con-secciones {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.seccion-cuerpo {
+  flex: 1;
+  min-height: 0;
+  padding: var(--espacio-4);
+  overflow: auto;
+  background: var(--color-ventana);
+  border: var(--borde-fino) solid var(--color-borde);
+  border-top: 0;
+}
+
+.seccion-estado {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--espacio-2);
+  margin-top: 2px;
+  padding: 2px var(--espacio-2);
+  font-family: var(--fuente-sistema);
+  font-size: var(--texto-2xs);
+  color: var(--color-texto-secundario);
+  background: var(--color-ventana-alterna);
+  border: var(--borde-fino) solid var(--color-borde);
+}
+
+@container escritorio (max-width: 640px) {
+  .seccion-cuerpo {
+    padding: var(--espacio-3);
+  }
 }

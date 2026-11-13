@@ -1,0 +1,24 @@
+<section class="panel" [attr.aria-label]="titulo()">
+  <header class="cabecera">
+    <app-icono [nombre]="icono()" [escala]="1" />
+    <h3 class="titulo">{{ titulo() }}</h3>
+    <button
+      class="boton boton--fantasma boton--chico"
+      type="button"
+      [attr.aria-pressed]="comoTabla()"
+      (click)="comoTabla.set(!comoTabla())"
+    >
+      <app-icono [nombre]="comoTabla() ? icono() : 'tabla'" [escala]="1" />
+      <span>{{ comoTabla() ? 'Ver como gráfico' : 'Ver como tabla' }}</span>
+    </button>
+  </header>
+  @if (subtitulo()) {
+    <span class="subtitulo">{{ subtitulo() }}</span>
+  }
+  <div class="cuerpo">
+    <ng-content />
+  </div>
+  <footer class="pie">
+    <ng-content select="[pie]" />
+  </footer>
+</section>

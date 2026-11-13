@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
+import { adminGuard } from './core/guards/admin.guard';
 import { appInstaladaGuard } from './core/guards/app-instalada.guard';
+import { authGuard } from './core/guards/auth.guard';
 import { cargaInicialGuard } from './core/guards/carga-inicial.guard';
 import { ConfigVentana } from './core/models/interfaz.model';
 import { EscritorioLayout } from './layouts/escritorio-layout/escritorio-layout';
@@ -9,6 +11,9 @@ const ventana = (config: ConfigVentana) => ({ ventana: config });
 
 /** Las pantallas de Tweeter comparten la ventana de la app. */
 const VENTANA_TWEETER: ConfigVentana = { titulo: 'tweeter', ancho: '620px' };
+
+/** Las pantallas del dashboard comparten la ventana; cada una suma su sección al título. */
+const VENTANA_DASHBOARD = { titulo: 'dashboard.exe', ancho: '1000px' };
 
 export const routes: Routes = [
   // Pantalla de arranque: valida el token guardado y lleva a Tweeter o al login.
@@ -50,6 +55,7 @@ export const routes: Routes = [
         path: 'cerrar-sesion',
         title: 'Cerrar sesión · Windose 20',
         data: ventana({ titulo: 'cerrar_sesion.exe', ancho: '400px' }),
+        canActivate: [authGuard],
         loadComponent: () =>
           import('./features/auth/cerrar-sesion/cerrar-sesion').then(
             (modulo) => modulo.CerrarSesion,
@@ -59,6 +65,7 @@ export const routes: Routes = [
         path: 'publicaciones',
         title: 'Tweeter · Windose 20',
         data: ventana(VENTANA_TWEETER),
+        canActivate: [authGuard],
         loadComponent: () =>
           import('./features/publicaciones/listado/listado').then((modulo) => modulo.Listado),
       },
@@ -66,6 +73,7 @@ export const routes: Routes = [
         path: 'publicaciones/nueva',
         title: 'Nueva publicación · Tweeter · Windose 20',
         data: ventana(VENTANA_TWEETER),
+        canActivate: [authGuard],
         loadComponent: () =>
           import('./features/publicaciones/nueva-publicacion/nueva-publicacion').then(
             (modulo) => modulo.NuevaPublicacion,
@@ -75,6 +83,7 @@ export const routes: Routes = [
         path: 'publicaciones/:id',
         title: 'Publicación · Tweeter · Windose 20',
         data: ventana(VENTANA_TWEETER),
+        canActivate: [authGuard],
         loadComponent: () =>
           import('./features/publicaciones/detalle/detalle').then((modulo) => modulo.Detalle),
       },
@@ -82,15 +91,43 @@ export const routes: Routes = [
         path: 'perfil',
         title: 'Mi perfil · Windose 20',
         data: ventana({ titulo: 'mi_perfil', ancho: '860px' }),
+        canActivate: [authGuard],
         loadComponent: () =>
           import('./features/perfil/mi-perfil/mi-perfil').then((modulo) => modulo.MiPerfil),
       },
+      { path: 'dashboard', pathMatch: 'full', redirectTo: 'dashboard/usuarios' },
       {
-        path: 'dashboard',
-        title: 'Dashboard · Windose 20',
-        data: ventana({ titulo: 'dashboard', ancho: '560px' }),
+        path: 'dashboard/usuarios',
+        title: 'Usuarios · Dashboard · Windose 20',
+        canActivate: [authGuard, adminGuard],
+        data: ventana({ ...VENTANA_DASHBOARD, seccion: 'usuarios', secciones: true }),
         loadComponent: () =>
-          import('./features/dashboard/inicio/inicio').then((modulo) => modulo.Inicio),
+          import('./features/dashboard/usuarios/usuarios').then((modulo) => modulo.Usuarios),
+      },
+      {
+        path: 'dashboard/usuarios/nuevo',
+        title: 'Nuevo usuario · Dashboard · Windose 20',
+        canActivate: [authGuard, adminGuard],
+        data: ventana({
+          ...VENTANA_DASHBOARD,
+          ancho: '780px',
+          seccion: 'nuevo usuario',
+          estado: ['dashboard › usuarios › nuevo', 'campos obligatorios salvo indicación'],
+        }),
+        loadComponent: () =>
+          import('./features/dashboard/nuevo-usuario/nuevo-usuario').then(
+            (modulo) => modulo.NuevoUsuario,
+          ),
+      },
+      {
+        path: 'dashboard/estadisticas',
+        title: 'Estadísticas · Dashboard · Windose 20',
+        canActivate: [authGuard, adminGuard],
+        data: ventana({ ...VENTANA_DASHBOARD, seccion: 'estadísticas', secciones: true }),
+        loadComponent: () =>
+          import('./features/dashboard/estadisticas/estadisticas').then(
+            (modulo) => modulo.Estadisticas,
+          ),
       },
       {
         path: 'leeme',

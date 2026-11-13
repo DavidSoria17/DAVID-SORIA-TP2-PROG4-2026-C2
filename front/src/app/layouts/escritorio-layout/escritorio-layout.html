@@ -18,7 +18,7 @@
   <app-ventana
     [oculta]="visible() === null"
     [clave]="ventanasService.activa() ?? ''"
-    [titulo]="configActiva()?.titulo ?? ''"
+    [titulo]="tituloVentana()"
     [ancho]="configActiva()?.ancho ?? 'auto'"
     [estado]="configActiva()?.estado ?? []"
     [secciones]="configActiva()?.secciones ?? false"

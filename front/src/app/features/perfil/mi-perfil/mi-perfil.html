@@ -10,7 +10,11 @@
         <h1 class="titulo-seccion nombre" id="perfil-nombre">
           {{ perfil.nombre }} {{ perfil.apellido }}
         </h1>
-        <p class="texto-secundario">{{ '@' + perfil.nombreUsuario }}</p>
+        <p class="texto-secundario">{{ perfil.nombreUsuario | arroba }}</p>
+        <span class="insignia insignia--admin" *appSiAdmin>
+          <app-icono nombre="corona" [escala]="1" />
+          Administrador
+        </span>
       </div>
       @if (perfil.descripcion) {
         <p class="descripcion">{{ perfil.descripcion }}</p>

@@ -1,3 +1,7 @@
+/** Cuántos elementos se saltean para llegar a una página (desde 1): el `offset` de la API. */
+export const offsetDePagina = (pagina: number, porPagina: number): number =>
+  (pagina - 1) * porPagina;
+
 /**
  * Números de página a mostrar en el paginador: la primera, la última y las
  * vecinas de la actual. Donde se saltean páginas va `null` (los puntos).

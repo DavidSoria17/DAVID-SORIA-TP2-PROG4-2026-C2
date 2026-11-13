@@ -10,6 +10,8 @@ import {
   Publicacion,
   PublicacionSchema,
 } from './entities/publicacion.entity.js';
+import { EstadisticasController } from './estadisticas.controller.js';
+import { EstadisticasService } from './estadisticas.service.js';
 import { PublicacionesController } from './publicaciones.controller.js';
 import { PublicacionesService } from './publicaciones.service.js';
 
@@ -23,7 +25,11 @@ import { PublicacionesService } from './publicaciones.service.js';
     UsuariosModule,
     ImagenesModule,
   ],
-  controllers: [PublicacionesController, ComentariosController],
-  providers: [PublicacionesService, ComentariosService],
+  controllers: [
+    PublicacionesController,
+    ComentariosController,
+    EstadisticasController,
+  ],
+  providers: [PublicacionesService, ComentariosService, EstadisticasService],
 })
 export class PublicacionesModule {}

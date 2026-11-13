@@ -1,5 +1,5 @@
 import { Component, computed, input, output } from '@angular/core';
-import { paginasVisibles } from '../../../core/utils/paginacion.utils';
+import { offsetDePagina, paginasVisibles } from '../../../core/utils/paginacion.utils';
 import { Icono } from '../icono/icono';
 
 /**
@@ -29,7 +29,7 @@ export class Paginador {
   protected readonly paginas = computed(() => paginasVisibles(this.pagina(), this.totalPaginas()));
 
   protected readonly resumen = computed(() => {
-    const desde = (this.pagina() - 1) * this.porPagina() + 1;
+    const desde = offsetDePagina(this.pagina(), this.porPagina()) + 1;
     const hasta = Math.min(this.pagina() * this.porPagina(), this.total());
     return `Mostrando ${desde}–${hasta} de ${this.total()} ${this.elementos()}`;
   });

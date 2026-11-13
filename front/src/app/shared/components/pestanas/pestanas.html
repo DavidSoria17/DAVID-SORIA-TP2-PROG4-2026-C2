@@ -1,0 +1,13 @@
+<nav class="pestanas" [attr.aria-label]="etiqueta()">
+  @for (pestana of pestanas(); track pestana.ruta) {
+    <a
+      class="pestana"
+      routerLinkActive="pestana--activa"
+      ariaCurrentWhenActive="page"
+      [routerLink]="pestana.ruta"
+    >
+      <app-icono [nombre]="pestana.icono" [escala]="1" />
+      <span>{{ pestana.etiqueta }}</span>
+    </a>
+  }
+</nav>

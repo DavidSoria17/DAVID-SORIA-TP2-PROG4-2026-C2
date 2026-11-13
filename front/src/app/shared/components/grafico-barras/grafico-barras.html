@@ -1,0 +1,68 @@
+@if (comoTabla()) {
+  <div class="tabla-contenedor">
+    <ng-container *ngTemplateOutlet="tabla" />
+  </div>
+} @else {
+  <ul class="barras">
+    @for (barra of barras(); track $index) {
+      <li
+        class="fila"
+        tabindex="0"
+        [class.fila--resaltada]="resaltada() === $index"
+        [attr.aria-label]="barra.etiqueta + ': ' + barra.descripcion"
+        (mouseenter)="resaltada.set($index)"
+        (mouseleave)="resaltada.set(null)"
+        (focus)="resaltada.set($index)"
+        (blur)="resaltada.set(null)"
+      >
+        <span class="etiqueta" [title]="barra.etiqueta">{{ barra.etiqueta }}</span>
+        <span class="pista" [style.--valor]="barra.ancho">
+          <span class="barra"></span>
+          @if (resaltada() === $index) {
+            <span
+              class="detalle"
+              [class.detalle--izquierda]="barra.detalleALaIzquierda"
+              aria-hidden="true"
+            >
+              <small>{{ barra.etiqueta }}</small>
+              <b>{{ barra.descripcion }}</b>
+              <small>{{ barra.parteDelTotal }}</small>
+            </span>
+          }
+        </span>
+        <span class="valor">{{ barra.valor }}</span>
+      </li>
+    }
+  </ul>
+  <div class="eje" aria-hidden="true">
+    <span></span>
+    <span>
+      @for (marca of eje().marcas; track $index) {
+        <span>{{ marca }}</span>
+      }
+    </span>
+    <span></span>
+  </div>
+  <div class="solo-lectores">
+    <ng-container *ngTemplateOutlet="tabla" />
+  </div>
+}
+
+<ng-template #tabla>
+  <table class="tabla">
+    <thead>
+      <tr>
+        <th scope="col">{{ columnas()[0] }}</th>
+        <th scope="col" class="numero">{{ columnas()[1] }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (dato of datos(); track $index) {
+        <tr>
+          <td>{{ dato.etiqueta }}</td>
+          <td class="numero" [attr.data-etiqueta]="columnas()[1]">{{ dato.valor }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</ng-template>

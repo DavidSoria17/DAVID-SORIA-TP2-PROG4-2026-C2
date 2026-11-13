@@ -27,3 +27,5 @@ export const ComentarioSchema = SchemaFactory.createForClass(Comentario);
 
 // Comentarios de una publicación, del más reciente al más viejo, con cursor.
 ComentarioSchema.index({ publicacion: 1, _id: -1 });
+// Rango de fechas de las estadísticas de comentarios.
+ComentarioSchema.index({ createdAt: 1 });

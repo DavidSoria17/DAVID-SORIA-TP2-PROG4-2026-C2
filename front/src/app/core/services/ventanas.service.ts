@@ -27,13 +27,13 @@ export class VentanasService {
   });
 
   /**
-   * Registra que se mostró la app de `ruta` en la dirección `url`; si no
-   * estaba abierta, se suma a la barra.
+   * Registra que se mostró la app de `ruta` en la dirección `url`, con la
+   * config de esa pantalla; si no estaba abierta, se suma a la barra.
    */
   activar(ruta: string, config: ConfigVentana, url: string): void {
     this.listaAbiertas.update((abiertas) =>
       this.estaAbierta(ruta)
-        ? abiertas.map((abierta) => (abierta.ruta === ruta ? { ...abierta, url } : abierta))
+        ? abiertas.map((abierta) => (abierta.ruta === ruta ? { ruta, config, url } : abierta))
         : [...abiertas, { ruta, config, url }],
     );
     this.rutaActiva.set(ruta);

@@ -1,0 +1,22 @@
+.introduccion {
+  margin: 0;
+  font-size: var(--texto-sm);
+  color: var(--color-texto-secundario);
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-3);
+  padding-top: var(--espacio-3);
+  border-top: var(--borde-separador);
+}
+
+@container escritorio (max-width: 640px) {
+  .acciones {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+}

@@ -72,6 +72,29 @@ export function fechaPasada(): ValidatorFn {
   };
 }
 
+/** Fecha DD/MM/AAAA completa y existente. */
+export function fechaValida(): ValidatorFn {
+  return ({ value }: AbstractControl<string>) =>
+    !value || textoAFechaIso(value)
+      ? null
+      : error('fecha', 'Escribí una fecha válida con el formato DD/MM/AAAA.');
+}
+
+/**
+ * Validador de `FormGroup`: la fecha de `desde` no puede ser posterior a la
+ * de `hasta` (las dos DD/MM/AAAA). Si alguna no es válida no opina: de eso se
+ * encarga `fechaValida`. El error queda en el grupo con la clave `rango`.
+ */
+export function rangoDeFechas(desde: string, hasta: string): ValidatorFn {
+  return (grupo: AbstractControl) => {
+    const inicio = textoAFechaIso(grupo.get(desde)?.value ?? '');
+    const fin = textoAFechaIso(grupo.get(hasta)?.value ?? '');
+    return !inicio || !fin || inicio <= fin
+      ? null
+      : error('rango', 'Tiene que ser igual o posterior a la fecha desde.');
+  };
+}
+
 /** JPG, PNG o WebP de hasta 2 MB. */
 export function imagenPermitida(): ValidatorFn {
   return ({ value }: AbstractControl<File | null>) => {

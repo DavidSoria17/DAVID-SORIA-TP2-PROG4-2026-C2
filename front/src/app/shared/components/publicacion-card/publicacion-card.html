@@ -7,7 +7,7 @@
       [urlImagen]="datos.autor.urlImagen"
     />
     <div class="autor">
-      <span class="nombre">{{ '@' + datos.autor.nombreUsuario }}</span>
+      <span class="nombre">{{ datos.autor.nombreUsuario | arroba }}</span>
       <time
         class="meta"
         [attr.datetime]="datos.createdAt"
@@ -27,9 +27,15 @@
   </h2>
   <p class="mensaje">{{ datos.mensaje }}</p>
 
-  @if (datos.urlImagen; as url) {
+  @if (datos.urlImagen && !imagenRota()) {
     <figure class="imagen">
-      <img [src]="url" [alt]="'Imagen de «' + datos.titulo + '»'" loading="lazy" />
+      <img
+        [src]="datos.urlImagen"
+        [alt]="'Imagen de «' + datos.titulo + '»'"
+        loading="lazy"
+        appImagenRespaldo
+        (sinImagen)="imagenRota.set(true)"
+      />
     </figure>
   }
 
@@ -47,7 +53,7 @@
       (click)="pedirMeGusta()"
     >
       <app-icono [nombre]="datos.meGustaPropio ? 'corazon' : 'corazonVacio'" />
-      <span aria-hidden="true">{{ datos.cantidadMeGusta }}</span>
+      <span aria-hidden="true">{{ datos.cantidadMeGusta | abreviarNumero }}</span>
     </button>
     @if (enlace(); as ruta) {
       <a
@@ -56,12 +62,12 @@
         [attr.aria-label]="'Ver los ' + datos.cantidadComentarios + ' comentarios'"
       >
         <app-icono nombre="comentario" />
-        <span aria-hidden="true">{{ datos.cantidadComentarios }}</span>
+        <span aria-hidden="true">{{ datos.cantidadComentarios | abreviarNumero }}</span>
       </a>
     } @else {
       <span class="comentarios" [attr.aria-label]="datos.cantidadComentarios + ' comentarios'">
         <app-icono nombre="comentario" />
-        <span aria-hidden="true">{{ datos.cantidadComentarios }}</span>
+        <span aria-hidden="true">{{ datos.cantidadComentarios | abreviarNumero }}</span>
       </span>
     }
     <span class="separador"></span>

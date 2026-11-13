@@ -18,6 +18,7 @@ import {
   Posicion,
 } from '../../../core/models/interfaz.model';
 import { CELDA_ICONO } from '../../../core/utils/escritorio.constants';
+import { limitar } from '../../../core/utils/numeros.utils';
 import { Arrastrable } from '../../directives/arrastrable/arrastrable';
 import { IconoApp } from '../icono-app/icono-app';
 import { Menu } from '../menu/menu';
@@ -217,8 +218,8 @@ export class IconosEscritorio implements OnInit, OnDestroy {
     this.menu.set({
       app,
       posicion: {
-        x: Math.max(0, Math.min(destino.x - area.left, area.width - ANCHO_MENU)),
-        y: Math.max(0, Math.min(destino.y - area.top, area.height - ALTO_MENU)),
+        x: limitar(destino.x - area.left, 0, area.width - ANCHO_MENU),
+        y: limitar(destino.y - area.top, 0, area.height - ALTO_MENU),
       },
     });
   }

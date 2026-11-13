@@ -1,5 +1,5 @@
 import { IsMongoId, IsOptional } from 'class-validator';
-import { LimiteDto } from './limite.dto.js';
+import { LimiteDto } from '../../common/dto/limite.dto.js';
 
 /** Página de comentarios con cursor: los anteriores al último que se recibió. */
 export class ListarComentariosDto extends LimiteDto {

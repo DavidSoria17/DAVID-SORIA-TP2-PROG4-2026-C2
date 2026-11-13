@@ -1,4 +1,5 @@
 import { Celda, Grilla, PedidoUbicacion } from '../models/interfaz.model';
+import { limitar } from './numeros.utils';
 
 /** Clave de texto de un casillero, para guardarlo en un `Set`. */
 export function claveCelda({ columna, fila }: Celda): string {
@@ -19,8 +20,8 @@ export function estaEnGrilla({ columna, fila }: Celda, grilla: Grilla): boolean 
 /** Lleva un casillero dentro de los límites de la grilla. */
 export function ajustarAGrilla({ columna, fila }: Celda, grilla: Grilla): Celda {
   return {
-    columna: Math.min(Math.max(0, columna), Math.max(0, grilla.columnas - 1)),
-    fila: Math.min(Math.max(0, fila), Math.max(0, grilla.filas - 1)),
+    columna: limitar(columna, 0, Math.max(0, grilla.columnas - 1)),
+    fila: limitar(fila, 0, Math.max(0, grilla.filas - 1)),
   };
 }
 

@@ -8,7 +8,7 @@
     <div>
       <h1 class="titulo-seccion titulo">¿Cerrar la sesión?</h1>
       <p class="texto-secundario">
-        Vas a salir de la cuenta {{ '@' + sesion.nombreUsuario }}. Para volver, tenés que iniciar
+        Vas a salir de la cuenta {{ sesion.nombreUsuario | arroba }}. Para volver, tenés que iniciar
         sesión de nuevo.
       </p>
     </div>

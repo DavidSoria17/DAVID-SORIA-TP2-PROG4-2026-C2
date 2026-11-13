@@ -14,7 +14,7 @@
       <app-publicacion-card
         [publicacion]="datos"
         [propia]="datos.autor._id === sesion._id"
-        [eliminable]="datos.autor._id === sesion._id"
+        [eliminable]="datos.autor._id === sesion._id || esAdmin()"
         (alternarMeGusta)="alternarMeGusta(datos)"
         (eliminar)="eliminar(datos)"
       />

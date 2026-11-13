@@ -1,0 +1,24 @@
+<app-formulario-usuario prefijo="nuevo-usuario" [conPerfil]="true" (enviar)="crear($event)">
+  <h1 class="solo-lectores" encabezado>Nuevo usuario</h1>
+  <p class="introduccion" encabezado>
+    Mismos datos que el registro. El usuario va a poder entrar apenas lo crees.
+  </p>
+
+  @if (errorServidor(); as mensaje) {
+    <app-aviso
+      encabezado
+      tipo="peligro"
+      titulo="No pudimos crear el usuario"
+      [texto]="mensaje"
+      (cerrar)="errorServidor.set(null)"
+    />
+  }
+
+  <div class="acciones">
+    <a class="boton" routerLink="/dashboard/usuarios">Cancelar</a>
+    <button class="boton boton--primario" type="submit" [disabled]="enviando()">
+      <app-icono nombre="mas" [escala]="1" />
+      {{ enviando() ? 'Creando usuario…' : 'Crear usuario' }}
+    </button>
+  </div>
+</app-formulario-usuario>

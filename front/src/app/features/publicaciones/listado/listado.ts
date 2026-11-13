@@ -18,6 +18,8 @@ import {
 } from '../../../core/models/publicacion.model';
 import { AuthService } from '../../../core/services/auth.service';
 import { mensajeDeError } from '../../../core/utils/errores.utils';
+import { reemplazarPorId } from '../../../core/utils/listas.utils';
+import { offsetDePagina } from '../../../core/utils/paginacion.utils';
 import { PUBLICACIONES_POR_PAGINA } from '../../../core/utils/publicaciones.constants';
 import { Aviso } from '../../../shared/components/aviso/aviso';
 import { EstadoVacio } from '../../../shared/components/estado-vacio/estado-vacio';
@@ -42,7 +44,10 @@ export class Listado implements OnInit, OnDestroy {
   private readonly publicacionesService = inject(PublicacionesService);
   private readonly elemento: HTMLElement = inject(ElementRef).nativeElement;
 
-  protected readonly usuario = inject(AuthService).usuario;
+  private readonly authService = inject(AuthService);
+  protected readonly usuario = this.authService.usuario;
+  /** Un administrador puede dar de baja cualquier publicación. */
+  protected readonly esAdmin = this.authService.esAdmin;
   protected readonly porPagina = PUBLICACIONES_POR_PAGINA;
   protected readonly orden = new FormControl<OrdenPublicaciones>('fecha', { nonNullable: true });
   protected readonly pagina = signal(1);
@@ -117,9 +122,7 @@ export class Listado implements OnInit, OnDestroy {
   }
 
   private reemplazar(actualizada: Publicacion): void {
-    this.publicaciones.update((publicaciones) =>
-      publicaciones.map((otra) => (otra._id === actualizada._id ? actualizada : otra)),
-    );
+    this.publicaciones.update((publicaciones) => reemplazarPorId(publicaciones, actualizada));
   }
 
   private async cargar(): Promise<void> {
@@ -127,7 +130,7 @@ export class Listado implements OnInit, OnDestroy {
     try {
       const respuesta = await this.publicacionesService.listar({
         orden: this.orden.value,
-        offset: (this.pagina() - 1) * PUBLICACIONES_POR_PAGINA,
+        offset: offsetDePagina(this.pagina(), PUBLICACIONES_POR_PAGINA),
         limit: PUBLICACIONES_POR_PAGINA,
       });
       if (pedido !== this.ultimoPedido) return;

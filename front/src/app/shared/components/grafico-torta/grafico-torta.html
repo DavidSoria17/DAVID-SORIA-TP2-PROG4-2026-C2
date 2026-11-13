@@ -1,0 +1,56 @@
+@if (comoTabla()) {
+  <div class="tabla-contenedor">
+    <ng-container *ngTemplateOutlet="tabla" />
+  </div>
+} @else {
+  <div class="torta">
+    <div class="dibujo">
+      <svg
+        [attr.viewBox]="'0 0 ' + lado + ' ' + lado"
+        shape-rendering="crispEdges"
+        aria-hidden="true"
+      >
+        @for (porcion of porciones(); track $index) {
+          <path [style.fill]="porcion.color" [attr.d]="porcion.trazo" />
+        }
+      </svg>
+      <div class="centro" aria-hidden="true">
+        <b>{{ total() }}</b>
+        {{ unidad() }}
+      </div>
+    </div>
+    <ul class="leyenda" aria-hidden="true">
+      @for (porcion of porciones(); track $index) {
+        <li>
+          <span class="muestra" [style.--muestra]="porcion.color"></span>
+          <span class="nombre" [title]="porcion.etiqueta">{{ porcion.etiqueta }}</span>
+          <span class="valor">{{ porcion.valor }} · {{ porcion.porcentaje }} %</span>
+        </li>
+      }
+    </ul>
+  </div>
+  <div class="solo-lectores">
+    <ng-container *ngTemplateOutlet="tabla" />
+  </div>
+}
+
+<ng-template #tabla>
+  <table class="tabla">
+    <thead>
+      <tr>
+        <th scope="col">{{ columnas()[0] }}</th>
+        <th scope="col" class="numero">{{ columnas()[1] }}</th>
+        <th scope="col" class="numero">Porcentaje</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (porcion of porciones(); track $index) {
+        <tr>
+          <td>{{ porcion.etiqueta }}</td>
+          <td class="numero" [attr.data-etiqueta]="columnas()[1]">{{ porcion.valor }}</td>
+          <td class="numero" data-etiqueta="Porcentaje">{{ porcion.porcentaje }} %</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</ng-template>

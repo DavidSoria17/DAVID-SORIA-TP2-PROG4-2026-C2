@@ -58,6 +58,13 @@ export class EscritorioLayout implements OnInit, OnDestroy {
     return this.ventanasService.abiertas().find((abierta) => abierta.ruta === activa)?.config;
   });
 
+  /** Nombre de la app y, si la pantalla tiene, su sección: «dashboard — usuarios». */
+  protected readonly tituloVentana = computed(() => {
+    const config = this.configActiva();
+    if (!config) return '';
+    return config.seccion ? `${config.titulo} — ${config.seccion}` : config.titulo;
+  });
+
   /** Si la ventana activa espera una respuesta que pidió ella. */
   protected readonly cargandoVentana = computed(() =>
     this.cargaService.ventanasCargando().has(this.ventanasService.activa()),

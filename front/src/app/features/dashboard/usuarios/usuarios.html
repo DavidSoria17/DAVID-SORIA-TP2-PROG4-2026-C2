@@ -1,0 +1,191 @@
+<h1 class="solo-lectores">Dashboard: usuarios</h1>
+<app-pestanas etiqueta="Secciones del dashboard" [pestanas]="pestanas" />
+
+<div class="seccion-cuerpo">
+  <div class="barra-herramientas">
+    <div class="selector-orden" role="radiogroup" aria-label="Filtrar por estado">
+      <div class="selector-orden__opciones">
+        <label class="selector-orden__opcion">
+          <input type="radio" name="estado-usuarios" value="todos" [formControl]="filtro" />
+          <span>
+            Todos
+            @if (datos(); as listado) {
+              <small>({{ listado.cantidades.todos }})</small>
+            }
+          </span>
+        </label>
+        <label class="selector-orden__opcion">
+          <input type="radio" name="estado-usuarios" value="habilitados" [formControl]="filtro" />
+          <span>
+            Habilitados
+            @if (datos(); as listado) {
+              <small>({{ listado.cantidades.habilitados }})</small>
+            }
+          </span>
+        </label>
+        <label class="selector-orden__opcion">
+          <input
+            type="radio"
+            name="estado-usuarios"
+            value="deshabilitados"
+            [formControl]="filtro"
+          />
+          <span>
+            Deshabilitados
+            @if (datos(); as listado) {
+              <small>({{ listado.cantidades.deshabilitados }})</small>
+            }
+          </span>
+        </label>
+      </div>
+    </div>
+    <a class="boton boton--primario" routerLink="/dashboard/usuarios/nuevo">
+      <app-icono nombre="mas" [escala]="1" />
+      Nuevo usuario
+    </a>
+  </div>
+
+  @if (error(); as mensaje) {
+    <app-aviso
+      tipo="peligro"
+      titulo="No pudimos cargar los usuarios"
+      [texto]="mensaje"
+      (cerrar)="error.set(null)"
+    />
+  }
+
+  @if (datos(); as listado) {
+    @if (listado.usuarios.length === 0) {
+      <app-estado-vacio titulo="No hay usuarios con este estado" />
+    } @else {
+      <div class="tabla-contenedor">
+        <table class="tabla">
+          <thead>
+            <tr>
+              <th scope="col">Usuario</th>
+              <th scope="col">Correo</th>
+              <th scope="col">Perfil</th>
+              <th scope="col">Estado</th>
+              <th scope="col" class="numero">Publ.</th>
+              <th scope="col"><span class="solo-lectores">Acciones</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (usuario of listado.usuarios; track usuario._id) {
+              @let nombre = nombreCompleto(usuario);
+              <tr [class.deshabilitada]="!usuario.activo">
+                <td>
+                  <div class="usuario">
+                    <app-avatar
+                      tamano="chico"
+                      [nombreUsuario]="usuario.nombreUsuario"
+                      [urlImagen]="usuario.urlImagen"
+                    />
+                    <span>
+                      <strong>{{ nombre }}</strong>
+                      <small>
+                        {{ usuario.nombreUsuario | arroba }} · alta
+                        {{ usuario.createdAt | date: 'dd/MM/yyyy' }}
+                      </small>
+                    </span>
+                  </div>
+                </td>
+                <td data-etiqueta="Correo">{{ usuario.correo }}</td>
+                <td data-etiqueta="Perfil">
+                  @if (usuario.perfil === 'administrador') {
+                    <span class="insignia insignia--admin">
+                      <app-icono nombre="corona" [escala]="1" />
+                      Administrador
+                    </span>
+                  } @else {
+                    <span class="insignia">
+                      <app-icono nombre="usuario" [escala]="1" />
+                      Usuario
+                    </span>
+                  }
+                </td>
+                <td data-etiqueta="Estado">
+                  @if (usuario.activo) {
+                    <span class="insignia insignia--habilitado">
+                      <app-icono nombre="ok" [escala]="1" />
+                      Habilitado
+                    </span>
+                  } @else {
+                    <span class="insignia insignia--deshabilitado">
+                      <app-icono nombre="prohibido" [escala]="1" />
+                      Deshabilitado
+                    </span>
+                  }
+                </td>
+                <td class="numero" data-etiqueta="Publicaciones">
+                  {{ usuario.cantidadPublicaciones }}
+                </td>
+                <td class="acciones">
+                  @if (usuario._id === sesion()?._id) {
+                    <span class="nota">Sos vos</span>
+                  } @else if (usuario.activo) {
+                    <button
+                      class="boton boton--peligro boton--chico"
+                      type="button"
+                      [attr.aria-label]="'Deshabilitar a ' + nombre"
+                      [disabled]="procesando() === usuario._id"
+                      (click)="porDeshabilitar.set(usuario)"
+                    >
+                      <app-icono nombre="prohibido" [escala]="1" />
+                      <span>Deshabilitar</span>
+                    </button>
+                  } @else {
+                    <button
+                      class="boton boton--chico"
+                      type="button"
+                      [attr.aria-label]="'Habilitar a ' + nombre"
+                      [disabled]="procesando() === usuario._id"
+                      (click)="habilitar(usuario)"
+                    >
+                      <app-icono nombre="ok" [escala]="1" />
+                      <span>Habilitar</span>
+                    </button>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <app-paginador
+        class="paginador"
+        elementos="usuarios"
+        [pagina]="pagina()"
+        [porPagina]="porPagina"
+        [total]="listado.total"
+        (cambiar)="irAPagina($event)"
+      />
+    }
+  }
+</div>
+
+<footer class="seccion-estado">
+  @if (datos(); as listado) {
+    <span>{{ listado.cantidades.todos }} usuarios</span>
+    <span>{{ listado.cantidades.deshabilitados }} deshabilitados</span>
+  }
+  <span>solo administradores</span>
+</footer>
+
+@if (porDeshabilitar(); as usuario) {
+  <app-modal
+    tipo="alerta"
+    [encabezado]="'¿Deshabilitar a ' + nombreCompleto(usuario) + '?'"
+    texto="No va a poder iniciar sesión hasta que vuelvas a habilitar su cuenta. Si lo intenta, le vamos a avisar que su cuenta está deshabilitada."
+    (cerrar)="porDeshabilitar.set(null)"
+  >
+    <button class="boton" type="button" autofocus (click)="porDeshabilitar.set(null)">
+      Cancelar
+    </button>
+    <button class="boton boton--peligro" type="button" (click)="deshabilitar()">
+      <app-icono nombre="prohibido" [escala]="1" />
+      Deshabilitar
+    </button>
+  </app-modal>
+}

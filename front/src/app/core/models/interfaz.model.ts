@@ -92,7 +92,10 @@ export interface IconoUbicado {
 
 /** Datos de la ventana de cada pantalla, definidos en `data.ventana` de la ruta. */
 export interface ConfigVentana {
+  /** Nombre de la app: lo muestran la barra de título y el botón de la barra de tareas. */
   titulo: string;
+  /** Pantalla de la app, que se suma al título de la ventana: «dashboard — usuarios». */
+  seccion?: string;
   /** Ancho en escritorio, como valor CSS. */
   ancho: string;
   estado?: readonly string[];
@@ -165,3 +168,10 @@ export type TamanoAvatar = 'chico' | 'normal' | 'grande' | 'xl';
 
 /** Qué se está por eliminar definitivamente de la papelera: la app elegida o todas. */
 export type EliminacionPapelera = 'seleccionada' | 'todas';
+
+/** Pestaña de una ventana con varias secciones; cada una es una pantalla con su ruta. */
+export interface PestanaVentana {
+  etiqueta: string;
+  ruta: string;
+  icono: NombreIcono;
+}

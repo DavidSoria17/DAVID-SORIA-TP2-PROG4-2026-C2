@@ -39,3 +39,22 @@
     <a class="enlace" routerLink="/registro">Creá tu cuenta</a>
   </p>
 </form>
+
+@if (cuentaDeshabilitada()) {
+  <app-modal
+    tituloVentana="atención"
+    tipo="peligro"
+    encabezado="Tu cuenta está deshabilitada"
+    texto="Un administrador deshabilitó tu cuenta, así que por ahora no podés entrar. Si creés que es un error, hablá con un administrador de Windose 20."
+    (cerrar)="cuentaDeshabilitada.set(false)"
+  >
+    <button
+      class="boton boton--primario"
+      type="button"
+      autofocus
+      (click)="cuentaDeshabilitada.set(false)"
+    >
+      Entendido
+    </button>
+  </app-modal>
+}

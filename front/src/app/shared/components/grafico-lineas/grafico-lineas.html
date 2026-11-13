@@ -1,0 +1,96 @@
+@if (comoTabla()) {
+  <div class="tabla-contenedor">
+    <ng-container *ngTemplateOutlet="tabla" />
+  </div>
+} @else {
+  <div class="grafico" aria-hidden="true">
+    <div class="eje-y">
+      @for (guia of guias(); track $index) {
+        <span [style.top]="'calc(' + guia.arriba + ' - 6px)'">{{ guia.marca }}</span>
+      }
+    </div>
+    <div class="dibujo" (mousemove)="seguirMouse($event)" (mouseleave)="volverAlMaximo()">
+      <svg [attr.viewBox]="'0 0 ' + ancho + ' ' + alto" preserveAspectRatio="none">
+        <defs>
+          <pattern [attr.id]="idTrama" width="4" height="4" patternUnits="userSpaceOnUse">
+            <rect width="2" height="2" opacity=".35" style="fill: var(--color-grafico-1)" />
+          </pattern>
+        </defs>
+        @for (guia of guias(); track $index) {
+          <line
+            x1="0"
+            [attr.x2]="ancho"
+            [attr.y1]="guia.y"
+            [attr.y2]="guia.y"
+            stroke-width="1"
+            vector-effect="non-scaling-stroke"
+            style="stroke: var(--color-grafico-grilla)"
+          />
+        }
+        <polygon [attr.points]="area()" [attr.fill]="'url(#' + idTrama + ')'" />
+        <polyline
+          [attr.points]="linea()"
+          fill="none"
+          stroke-width="2"
+          stroke-linejoin="miter"
+          vector-effect="non-scaling-stroke"
+          style="stroke: var(--color-grafico-1)"
+        />
+        @if (detalle(); as punto) {
+          <line
+            [attr.x1]="punto.x"
+            [attr.x2]="punto.x"
+            y1="0"
+            [attr.y2]="alto"
+            stroke-width="1"
+            stroke-dasharray="3 3"
+            vector-effect="non-scaling-stroke"
+            style="stroke: var(--color-borde)"
+          />
+        }
+      </svg>
+      @if (detalle(); as punto) {
+        <span class="punto" [style.left]="punto.izquierda" [style.top]="punto.arriba"></span>
+        <div
+          class="detalle"
+          [class.detalle--izquierda]="punto.haciaLaIzquierda"
+          [style.--x]="punto.izquierda"
+        >
+          <small>{{ punto.etiqueta }}</small>
+          <b>{{ punto.descripcion }}</b>
+          @if (punto.esMaximo && notaMaximo(); as nota) {
+            <small>{{ nota }}</small>
+          }
+        </div>
+      }
+    </div>
+    <span></span>
+    <div class="eje-x">
+      @for (marca of marcasX(); track $index) {
+        <span>{{ marca }}</span>
+      }
+    </div>
+  </div>
+  <div class="solo-lectores">
+    <ng-container *ngTemplateOutlet="tabla" />
+  </div>
+}
+
+<ng-template #tabla>
+  <table class="tabla">
+    <thead>
+      <tr>
+        <th scope="col">{{ columnas()[0] }}</th>
+        <th scope="col" class="numero">{{ columnas()[1] }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (dato of datos(); track $index) {
+        <tr>
+          <td>{{ dato.etiqueta }}</td>
+          <td class="numero" [attr.data-etiqueta]="columnas()[1]">{{ dato.valor }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</ng-template>
