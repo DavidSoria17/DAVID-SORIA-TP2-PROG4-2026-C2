@@ -67,56 +67,6 @@
   margin-bottom: var(--espacio-4);
 }
 
-/* ---------- Cifras destacadas ---------- */
-
-.cifras {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--espacio-3);
-  margin-bottom: var(--espacio-4);
-}
-
-.cifra {
-  display: grid;
-  gap: 2px;
-  padding: var(--espacio-3) var(--espacio-4);
-  background: var(--color-ventana);
-  border: var(--borde-control);
-  box-shadow: var(--sombra-ventana);
-}
-
-.cifra__etiqueta {
-  display: flex;
-  align-items: center;
-  gap: var(--espacio-2);
-  font-family: var(--fuente-sistema);
-  font-size: var(--texto-xs);
-  color: var(--color-texto-secundario);
-}
-
-.cifra__valor {
-  font-family: var(--fuente-sistema-titulo);
-  font-size: var(--texto-3xl);
-  font-variant-numeric: tabular-nums;
-  line-height: 1;
-  color: var(--color-texto);
-}
-
-.cifra__delta {
-  font-family: var(--fuente-sistema);
-  font-size: var(--texto-xs);
-  color: var(--color-texto-secundario);
-}
-
-.cifra__delta b {
-  font-weight: var(--peso-normal);
-  color: var(--color-exito);
-}
-
-.cifra__delta--baja b {
-  color: var(--color-peligro);
-}
-
 /* ---------- Gráficos ---------- */
 
 .graficos {
@@ -158,19 +108,7 @@
     max-width: none;
   }
 
-  .cifras,
   .graficos {
     grid-template-columns: 1fr;
-  }
-
-  .cifra {
-    grid-template-columns: 1fr auto;
-    align-items: end;
-  }
-
-  .cifra__valor {
-    grid-row: span 2;
-    grid-column: 2;
-    font-size: var(--texto-2xl);
   }
 }

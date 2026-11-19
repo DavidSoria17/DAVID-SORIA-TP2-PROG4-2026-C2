@@ -95,12 +95,6 @@ export function listarDias(rango: RangoFechas): string[] {
   return Array.from({ length: diasDelLapso(rango) }, (_, indice) => sumarDias(rango.desde, indice));
 }
 
-/** Lapso del mismo largo que termina el día anterior a `desde`, para comparar. */
-export function lapsoAnterior(rango: RangoFechas): RangoFechas {
-  const hasta = sumarDias(rango.desde, -1);
-  return { desde: sumarDias(hasta, 1 - diasDelLapso(rango)), hasta };
-}
-
 /** Lapso de un atajo del filtro, que termina en `hoy` (AAAA-MM-DD). */
 export function lapsoRapido(lapso: LapsoRapido, hoy: string): RangoFechas {
   switch (lapso) {

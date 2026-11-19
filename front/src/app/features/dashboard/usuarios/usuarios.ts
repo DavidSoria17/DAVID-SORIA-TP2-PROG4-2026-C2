@@ -3,7 +3,7 @@ import { Component, effect, inject, OnDestroy, OnInit, signal, untracked } from 
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { EstadoUsuarios, PaginaUsuarios, UsuarioListado } from '../../../core/models/usuario.model';
+import { EstadoUsuarios, PaginaUsuarios, Usuario } from '../../../core/models/usuario.model';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificacionService } from '../../../core/services/notificacion.service';
 import { PESTANAS_DASHBOARD, USUARIOS_POR_PAGINA } from '../../../core/utils/dashboard.constants';
@@ -25,9 +25,9 @@ type FiltroEstado = EstadoUsuarios | 'todos';
 
 /**
  * Dashboard › Usuarios: todas las cuentas, de las más nuevas a las más
- * viejas, con su perfil, su estado y cuántas publicaciones tienen. Se
- * filtran por estado, se deshabilitan (con confirmación) y se vuelven a
- * habilitar. Desde acá se pasa al alta de un usuario nuevo.
+ * viejas, con su perfil y su estado. Se filtran por estado, se deshabilitan
+ * (con confirmación) y se vuelven a habilitar. Desde acá se pasa al alta de
+ * un usuario nuevo.
  */
 @Component({
   selector: 'app-usuarios',
@@ -61,7 +61,7 @@ export class Usuarios implements OnInit, OnDestroy {
   protected readonly datos = signal<PaginaUsuarios | null>(null);
   protected readonly error = signal<string | null>(null);
   /** Usuario que se está por deshabilitar, mientras se ve la confirmación. */
-  protected readonly porDeshabilitar = signal<UsuarioListado | null>(null);
+  protected readonly porDeshabilitar = signal<Usuario | null>(null);
   /** Id del usuario que espera la respuesta de un cambio de estado. */
   protected readonly procesando = signal<string | null>(null);
 
@@ -107,12 +107,12 @@ export class Usuarios implements OnInit, OnDestroy {
     await this.cambiarEstado(usuario, false);
   }
 
-  protected async habilitar(usuario: UsuarioListado): Promise<void> {
+  protected async habilitar(usuario: Usuario): Promise<void> {
     await this.cambiarEstado(usuario, true);
   }
 
   /** Avisa el resultado y recarga la página, porque cambian las cantidades (y la fila puede salir del filtro). */
-  private async cambiarEstado(usuario: UsuarioListado, habilitar: boolean): Promise<void> {
+  private async cambiarEstado(usuario: Usuario, habilitar: boolean): Promise<void> {
     const nombre = nombreCompleto(usuario);
     this.procesando.set(usuario._id);
     try {

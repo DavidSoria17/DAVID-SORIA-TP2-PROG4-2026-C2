@@ -27,7 +27,7 @@ export class UsuariosService {
    */
   readonly altas = this.cantidadAltas.asReadonly();
 
-  /** Página de usuarios, de los más nuevos a los más viejos, con su cantidad de publicaciones. */
+  /** Página de usuarios, de los más nuevos a los más viejos. */
   listar({ estado, offset, limit }: FiltrosUsuarios): Promise<PaginaUsuarios> {
     let params = new HttpParams().set('offset', offset).set('limit', limit);
     if (estado) params = params.set('estado', estado);

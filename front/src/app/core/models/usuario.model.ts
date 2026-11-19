@@ -44,14 +44,15 @@ export interface DatosRegistro {
   imagen: File | null;
 }
 
+/** Datos editables del perfil propio. Correo, nombre de usuario y contraseña no se cambian. */
+export type DatosPerfil = Pick<
+  DatosRegistro,
+  'nombre' | 'apellido' | 'fechaNacimiento' | 'descripcion' | 'imagen'
+>;
+
 /** Alta hecha por un administrador: los datos del registro y el perfil elegido. */
 export interface DatosAltaUsuario extends DatosRegistro {
   perfil: Perfil;
-}
-
-/** Usuario del listado de administración, con cuántas publicaciones activas tiene. */
-export interface UsuarioListado extends Usuario {
-  cantidadPublicaciones: number;
 }
 
 /** Filtro del listado de administración; sin valor, todos. */
@@ -64,7 +65,7 @@ export interface FiltrosUsuarios {
 }
 
 export interface PaginaUsuarios {
-  usuarios: UsuarioListado[];
+  usuarios: Usuario[];
   /** Cantidad que cumple el filtro. */
   total: number;
   /** Cuántos hay de cada estado, sin importar el filtro. */

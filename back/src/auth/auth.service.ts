@@ -9,7 +9,10 @@ import jwt from 'jsonwebtoken';
 import { PayloadToken } from '../common/interfaces/payload-token.interface.js';
 import { CrearUsuarioDto } from '../usuarios/dto/crear-usuario.dto.js';
 import { UsuarioDocument } from '../usuarios/entities/usuario.entity.js';
-import { UsuariosService } from '../usuarios/usuarios.service.js';
+import {
+  MENSAJE_CUENTA_DESHABILITADA,
+  UsuariosService,
+} from '../usuarios/usuarios.service.js';
 import { LoginDto } from './dto/login.dto.js';
 
 export interface RespuestaAuth {
@@ -56,25 +59,17 @@ export class AuthService {
       throw new UnauthorizedException('Usuario o contraseña incorrectos');
     }
     if (!usuario.activo) {
-      throw new ForbiddenException(
-        'Tu cuenta está deshabilitada. Comunicate con un administrador',
-      );
+      throw new ForbiddenException(MENSAJE_CUENTA_DESHABILITADA);
     }
     return { usuario, token: this.firmarToken(usuario) };
   }
 
-  /**
-   * Datos actualizados del usuario de un token que ya validó `TokenGuard`.
-   * Lanza 403 si la cuenta se deshabilitó después de emitir el token.
-   */
+  /** Datos actualizados del usuario de un token que ya validó `TokenGuard`. */
   autorizar(sesion: PayloadToken): Promise<UsuarioDocument> {
     return this.usuariosService.buscarActivo(sesion.sub);
   }
 
-  /**
-   * Token nuevo con el mismo payload y otros 15 minutos de validez. Lanza 403
-   * si la cuenta se deshabilitó después de emitir el token anterior.
-   */
+  /** Token nuevo con el mismo payload y otros 15 minutos de validez. */
   async refrescar(sesion: PayloadToken): Promise<{ token: string }> {
     const usuario = await this.usuariosService.buscarActivo(sesion.sub);
     return { token: this.firmarToken(usuario) };

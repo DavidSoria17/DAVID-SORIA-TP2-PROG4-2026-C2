@@ -3,6 +3,10 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { DatosAltaUsuario, Perfil } from '../../../core/models/usuario.model';
 import { textoAFechaIso } from '../../../core/utils/fechas.utils';
 import {
+  LARGO_MAXIMO_DESCRIPCION,
+  LARGO_MAXIMO_NOMBRE,
+} from '../../../core/utils/usuarios.constants';
+import {
   camposIguales,
   contrasenaSegura,
   fechaPasada,
@@ -15,9 +19,6 @@ import { CampoContrasena } from '../campo-contrasena/campo-contrasena';
 import { CampoFormulario } from '../campo-formulario/campo-formulario';
 import { CampoImagen } from '../campo-imagen/campo-imagen';
 import { Icono } from '../icono/icono';
-
-const LARGO_MAXIMO_NOMBRE = 50;
-const LARGO_MAXIMO_DESCRIPCION = 200;
 
 /**
  * Formulario con los datos de una cuenta nueva: el del registro y el del alta

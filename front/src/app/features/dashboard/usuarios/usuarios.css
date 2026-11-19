@@ -22,12 +22,6 @@
   color: var(--color-texto-secundario);
 }
 
-.numero {
-  font-family: var(--fuente-sistema);
-  font-variant-numeric: tabular-nums;
-  text-align: right;
-}
-
 .acciones {
   white-space: nowrap;
   text-align: right;

@@ -32,11 +32,10 @@ export class PublicacionesController {
 
   @Get()
   listar(
-    @Query('orden', ParseOrdenPipe) orden: OrdenPublicaciones,
     @Query() filtros: ListarPublicacionesDto,
     @UsuarioActual() usuario: PayloadToken,
   ) {
-    return this.publicacionesService.listar(orden, filtros, usuario.sub);
+    return this.publicacionesService.listar(filtros, usuario.sub);
   }
 
   @Get(':id')

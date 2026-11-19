@@ -9,6 +9,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { minutes, Throttle } from '@nestjs/throttler';
 import { UsuarioActual } from '../common/decorators/usuario-actual.decorator.js';
 import { TokenGuard } from '../common/guards/token.guard.js';
 import type { PayloadToken } from '../common/interfaces/payload-token.interface.js';
@@ -18,11 +19,15 @@ import { CrearUsuarioDto } from '../usuarios/dto/crear-usuario.dto.js';
 import { AuthService } from './auth.service.js';
 import { LoginDto } from './dto/login.dto.js';
 
+/** Intentos por minuto y por IP en login y registro, para frenar ataques de fuerza bruta. */
+const LIMITE_ACCESO = { default: { limit: 5, ttl: minutes(1) } };
+
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('registro')
+  @Throttle(LIMITE_ACCESO)
   @UseInterceptors(FileInterceptor('imagen'))
   registrar(
     @Body(NormalizarTextoPipe) datos: CrearUsuarioDto,
@@ -33,6 +38,7 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
+  @Throttle(LIMITE_ACCESO)
   iniciarSesion(@Body(NormalizarTextoPipe) datos: LoginDto) {
     return this.authService.iniciarSesion(datos);
   }

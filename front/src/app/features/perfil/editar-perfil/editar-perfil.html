@@ -1,0 +1,96 @@
+@if (usuario(); as sesion) {
+  <form class="pila" [formGroup]="formulario" (ngSubmit)="guardar()">
+    <div class="cuenta">
+      <app-avatar
+        tamano="grande"
+        [nombreUsuario]="sesion.nombreUsuario"
+        [urlImagen]="sesion.urlImagen"
+      />
+      <div>
+        <h1 class="titulo-seccion">Editar perfil</h1>
+        <p class="texto-secundario">{{ sesion.nombreUsuario | arroba }} · {{ sesion.correo }}</p>
+      </div>
+    </div>
+
+    @if (errorServidor(); as mensaje) {
+      <app-aviso
+        tipo="peligro"
+        titulo="No pudimos guardar los cambios"
+        [texto]="mensaje"
+        (cerrar)="errorServidor.set(null)"
+      />
+    }
+
+    <div class="grilla">
+      <app-campo-formulario etiqueta="Nombre" para="perfil-nombre">
+        <input
+          class="control"
+          id="perfil-nombre"
+          type="text"
+          autocomplete="given-name"
+          formControlName="nombre"
+        />
+      </app-campo-formulario>
+
+      <app-campo-formulario etiqueta="Apellido" para="perfil-apellido">
+        <input
+          class="control"
+          id="perfil-apellido"
+          type="text"
+          autocomplete="family-name"
+          formControlName="apellido"
+        />
+      </app-campo-formulario>
+
+      <app-campo-formulario etiqueta="Fecha de nacimiento" para="perfil-nacimiento">
+        <input
+          class="control"
+          id="perfil-nacimiento"
+          type="text"
+          placeholder="DD/MM/AAAA"
+          autocomplete="bday"
+          appFechaMask
+          formControlName="fechaNacimiento"
+        />
+      </app-campo-formulario>
+
+      <app-campo-formulario
+        class="ocupa-todo"
+        etiqueta="Descripción breve"
+        para="perfil-descripcion"
+        [opcional]="true"
+      >
+        <textarea
+          class="control"
+          id="perfil-descripcion"
+          rows="3"
+          [maxLength]="largoMaximoDescripcion"
+          formControlName="descripcion"
+        ></textarea>
+        <span class="contador" aria-live="polite">
+          {{ formulario.controls.descripcion.value.length }}/{{ largoMaximoDescripcion }}
+        </span>
+      </app-campo-formulario>
+
+      <app-campo-formulario
+        class="ocupa-todo"
+        etiqueta="Foto de perfil nueva"
+        para="perfil-imagen"
+        [opcional]="true"
+      >
+        <app-campo-imagen idControl="perfil-imagen" formControlName="imagen" />
+      </app-campo-formulario>
+    </div>
+
+    <div class="acciones">
+      <button class="boton" type="button" (click)="volver()">Cancelar</button>
+      <button class="boton boton--primario" type="submit" [disabled]="enviando()">
+        {{ enviando() ? 'Guardando…' : 'Guardar cambios' }}
+      </button>
+    </div>
+  </form>
+} @else {
+  <app-estado-vacio titulo="No iniciaste sesión" texto="Entrá con tu cuenta para editar tu perfil.">
+    <a class="boton boton--primario" routerLink="/login">Iniciar sesión</a>
+  </app-estado-vacio>
+}

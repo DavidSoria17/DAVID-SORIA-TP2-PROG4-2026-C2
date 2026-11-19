@@ -94,8 +94,7 @@ export class PublicacionesService {
    * @param idUsuario id de quien hace el pedido
    */
   async listar(
-    orden: OrdenPublicaciones,
-    { usuario, offset, limit }: ListarPublicacionesDto,
+    { usuario, offset, limit, orden }: ListarPublicacionesDto,
     idUsuario: string,
   ): Promise<PaginaPublicaciones> {
     const filtro = {

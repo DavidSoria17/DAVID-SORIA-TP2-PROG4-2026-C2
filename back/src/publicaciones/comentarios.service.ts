@@ -126,28 +126,15 @@ export class ComentariosService {
   ): Promise<ComentarioListado> {
     await this.verificarPublicacion(idPublicacion);
 
-    const comentario = await this.comentarioModel
-      .findOne({ _id: idComentario, publicacion: idPublicacion })
-      .select('autor._id')
-      .lean()
-      .exec();
+    const comentario = await this.comentarioModel.findOne({ _id: idComentario, publicacion: idPublicacion });
     if (!comentario) throw new NotFoundException('El comentario no existe');
     if (!comentario.autor._id.equals(sesion.sub)) {
-      throw new ForbiddenException(
-        'Solo quien escribió el comentario puede editarlo',
-      );
+      throw new ForbiddenException('Solo quien escribió el comentario puede editarlo');
     }
-
-    const editado = await this.comentarioModel
-      .findOneAndUpdate(
-        { _id: idComentario },
-        { $set: { mensaje, modificado: true } },
-        { returnDocument: 'after' },
-      )
-      .lean<ComentarioListado>()
-      .exec();
-    if (!editado) throw new NotFoundException('El comentario no existe');
-    return editado;
+    comentario.mensaje = mensaje;
+    comentario.modificado = true;
+    await comentario.save();
+    return comentario.toObject<ComentarioListado>();
   }
 
   /** Lanza 404 si la publicación no existe o está dada de baja. */

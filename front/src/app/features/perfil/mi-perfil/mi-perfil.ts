@@ -1,9 +1,8 @@
 import { DatePipe } from '@angular/common';
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal, untracked } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Comentario as DatosComentario } from '../../../core/models/comentario.model';
 import { Publicacion } from '../../../core/models/publicacion.model';
-import { Usuario } from '../../../core/models/usuario.model';
 import { AuthService } from '../../../core/services/auth.service';
 import { mensajeDeError } from '../../../core/utils/errores.utils';
 import { reemplazarPorId } from '../../../core/utils/listas.utils';
@@ -24,9 +23,9 @@ import { PerfilService } from '../services/perfil.service';
 
 /**
  * Mi perfil: datos y foto del usuario de la sesión, y sus últimas
- * publicaciones con los comentarios más recientes de cada una. Mientras
- * llegan los datos actualizados del servidor muestra los guardados al
- * iniciar sesión.
+ * publicaciones con los comentarios más recientes de cada una. Muestra el
+ * usuario guardado en la sesión, que `PerfilService` reemplaza por los datos
+ * del servidor al cargar y al editar el perfil.
  */
 @Component({
   selector: 'app-mi-perfil',
@@ -48,10 +47,8 @@ import { PerfilService } from '../services/perfil.service';
 export class MiPerfil implements OnInit {
   private readonly perfilService = inject(PerfilService);
   private readonly publicacionesService = inject(PublicacionesService);
-  private readonly sesion = inject(AuthService).usuario;
-  private readonly perfilActualizado = signal<Usuario | null>(null);
 
-  protected readonly usuario = computed(() => this.perfilActualizado() ?? this.sesion());
+  protected readonly usuario = inject(AuthService).usuario;
   protected readonly cantidadMostrada = PUBLICACIONES_EN_PERFIL;
   protected readonly publicaciones = signal<Publicacion[]>([]);
   /** Comentarios de cada publicación, por id. */
@@ -59,9 +56,24 @@ export class MiPerfil implements OnInit {
   protected readonly totalPublicaciones = signal<number | null>(null);
   protected readonly error = signal<string | null>(null);
 
+  private readonly fotoDePerfil = computed(() => this.usuario()?.urlImagen);
+  private fotoVista = this.fotoDePerfil();
+
+  /**
+   * La pantalla se conserva mientras se edita el perfil. Si cambió la foto,
+   * las tarjetas tienen la copia vieja del autor y se vuelven a pedir.
+   */
+  private readonly seguirFoto = effect(() => {
+    const foto = this.fotoDePerfil();
+    if (foto === this.fotoVista) return;
+    this.fotoVista = foto;
+    const usuario = untracked(this.usuario);
+    if (usuario) untracked(() => void this.cargar(usuario._id));
+  });
+
   ngOnInit(): void {
-    const sesion = this.sesion();
-    if (sesion) void this.cargar(sesion._id);
+    const usuario = this.usuario();
+    if (usuario) void this.cargar(usuario._id);
   }
 
   protected async alternarMeGusta(publicacion: Publicacion): Promise<void> {
@@ -78,7 +90,7 @@ export class MiPerfil implements OnInit {
 
   private async cargar(idUsuario: string): Promise<void> {
     try {
-      const [perfil, pagina] = await Promise.all([
+      const [, pagina] = await Promise.all([
         this.perfilService.obtener(),
         this.publicacionesService.listar({
           orden: 'fecha',
@@ -92,7 +104,6 @@ export class MiPerfil implements OnInit {
           this.publicacionesService.listarComentarios(_id, COMENTARIOS_EN_PERFIL),
         ),
       );
-      this.perfilActualizado.set(perfil);
       this.publicaciones.set(pagina.publicaciones);
       this.totalPublicaciones.set(pagina.total);
       this.comentarios.set(

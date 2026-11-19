@@ -25,15 +25,11 @@ export interface ComentariosPorPublicacion {
   cantidad: number;
 }
 
-/** Todo lo que muestra la pantalla de estadísticas para un lapso. */
+/** Datos de los tres gráficos de la pantalla de estadísticas para un lapso. */
 export interface ResumenEstadisticas {
   publicacionesPorUsuario: PublicacionesPorUsuario[];
   comentariosPorDia: ComentariosPorDia[];
   comentariosPorPublicacion: ComentariosPorPublicacion[];
-  /** Totales del lapso del mismo largo inmediatamente anterior, para comparar. */
-  anterior: { publicaciones: number; comentarios: number };
-  /** Cuentas registradas, habilitadas o no. */
-  usuariosRegistrados: number;
 }
 
 /** Dato de un gráfico de una sola serie: barras, torta o líneas. */

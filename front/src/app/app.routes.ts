@@ -12,6 +12,9 @@ const ventana = (config: ConfigVentana) => ({ ventana: config });
 /** Las pantallas de Tweeter comparten la ventana de la app. */
 const VENTANA_TWEETER: ConfigVentana = { titulo: 'tweeter', ancho: '620px' };
 
+/** Las pantallas de Mi perfil comparten la ventana de la app. */
+const VENTANA_PERFIL: ConfigVentana = { titulo: 'mi_perfil', ancho: '860px' };
+
 /** Las pantallas del dashboard comparten la ventana; cada una suma su sección al título. */
 const VENTANA_DASHBOARD = { titulo: 'dashboard.exe', ancho: '1000px' };
 
@@ -90,10 +93,20 @@ export const routes: Routes = [
       {
         path: 'perfil',
         title: 'Mi perfil · Windose 20',
-        data: ventana({ titulo: 'mi_perfil', ancho: '860px' }),
+        data: ventana(VENTANA_PERFIL),
         canActivate: [authGuard],
         loadComponent: () =>
           import('./features/perfil/mi-perfil/mi-perfil').then((modulo) => modulo.MiPerfil),
+      },
+      {
+        path: 'perfil/editar',
+        title: 'Editar perfil · Mi perfil · Windose 20',
+        data: ventana(VENTANA_PERFIL),
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./features/perfil/editar-perfil/editar-perfil').then(
+            (modulo) => modulo.EditarPerfil,
+          ),
       },
       { path: 'dashboard', pathMatch: 'full', redirectTo: 'dashboard/usuarios' },
       {

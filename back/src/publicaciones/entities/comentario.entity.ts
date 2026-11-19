@@ -29,3 +29,5 @@ export const ComentarioSchema = SchemaFactory.createForClass(Comentario);
 ComentarioSchema.index({ publicacion: 1, _id: -1 });
 // Rango de fechas de las estadísticas de comentarios.
 ComentarioSchema.index({ createdAt: 1 });
+// Actualización de la copia del autor cuando cambia su foto de perfil.
+ComentarioSchema.index({ 'autor._id': 1 });

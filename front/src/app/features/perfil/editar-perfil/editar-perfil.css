@@ -1,0 +1,45 @@
+.cuenta {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-4);
+}
+
+.cuenta p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.grilla {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--espacio-4) var(--espacio-5);
+}
+
+.ocupa-todo {
+  grid-column: 1 / -1;
+}
+
+.contador {
+  align-self: flex-end;
+  font-family: var(--fuente-sistema);
+  font-size: var(--texto-2xs);
+  color: var(--color-texto-secundario);
+}
+
+.acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--espacio-3);
+  padding-top: var(--espacio-3);
+  border-top: var(--borde-separador);
+}
+
+@container escritorio (max-width: 640px) {
+  .grilla {
+    grid-template-columns: 1fr;
+  }
+
+  .acciones {
+    flex-direction: column-reverse;
+  }
+}

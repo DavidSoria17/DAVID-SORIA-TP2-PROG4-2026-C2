@@ -35,6 +35,10 @@
           <dd>{{ totalPublicaciones() }} {{ totalPublicaciones() === 1 ? 'vez' : 'veces' }}</dd>
         }
       </dl>
+      <a class="boton" routerLink="/perfil/editar">
+        <app-icono nombre="lapiz" [escala]="1" />
+        Editar perfil
+      </a>
     </section>
 
     <section class="pila" aria-labelledby="perfil-ultimas">

@@ -10,9 +10,6 @@ import {
   ResumenEstadisticas,
 } from '../../../core/models/estadistica.model';
 import { PUBLICACIONES_EN_TORTA } from '../../../core/utils/dashboard.constants';
-import { lapsoAnterior } from '../../../core/utils/fechas.utils';
-import { sumar } from '../../../core/utils/numeros.utils';
-import { UsuariosService } from './usuarios.service';
 
 /**
  * Estadísticas del panel de administración contra la API. Rechaza con el
@@ -21,41 +18,20 @@ import { UsuariosService } from './usuarios.service';
 @Service()
 export class EstadisticasService {
   private readonly http = inject(HttpClient);
-  private readonly usuariosService = inject(UsuariosService);
   private readonly url = `${environment.urlApi}/estadisticas`;
 
   /**
-   * Todo lo que muestra la pantalla para un lapso: los datos de los tres
-   * gráficos, los totales del lapso anterior del mismo largo (para comparar)
-   * y cuántas cuentas hay registradas. Los pedidos salen en paralelo.
+   * Los datos de los tres gráficos para un lapso. Los tres pedidos salen en
+   * paralelo.
    */
   async resumen(rango: RangoFechas): Promise<ResumenEstadisticas> {
-    const anterior = lapsoAnterior(rango);
-    const [
-      publicacionesPorUsuario,
-      comentariosPorDia,
-      comentariosPorPublicacion,
-      publicacionesAnteriores,
-      comentariosAnteriores,
-      usuarios,
-    ] = await Promise.all([
-      this.publicacionesPorUsuario(rango),
-      this.comentariosPorDia(rango),
-      this.comentariosPorPublicacion(rango, PUBLICACIONES_EN_TORTA),
-      this.publicacionesPorUsuario(anterior),
-      this.comentariosPorDia(anterior),
-      this.usuariosService.listar({ estado: null, offset: 0, limit: 1 }),
-    ]);
-    return {
-      publicacionesPorUsuario,
-      comentariosPorDia,
-      comentariosPorPublicacion,
-      anterior: {
-        publicaciones: sumar(publicacionesAnteriores.map(({ cantidad }) => cantidad)),
-        comentarios: sumar(comentariosAnteriores.map(({ cantidad }) => cantidad)),
-      },
-      usuariosRegistrados: usuarios.cantidades.todos,
-    };
+    const [publicacionesPorUsuario, comentariosPorDia, comentariosPorPublicacion] =
+      await Promise.all([
+        this.publicacionesPorUsuario(rango),
+        this.comentariosPorDia(rango),
+        this.comentariosPorPublicacion(rango, PUBLICACIONES_EN_TORTA),
+      ]);
+    return { publicacionesPorUsuario, comentariosPorDia, comentariosPorPublicacion };
   }
 
   private publicacionesPorUsuario(rango: RangoFechas): Promise<PublicacionesPorUsuario[]> {

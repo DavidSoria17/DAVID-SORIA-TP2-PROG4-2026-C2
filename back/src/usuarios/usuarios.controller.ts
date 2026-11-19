@@ -6,6 +6,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Post,
   Query,
   UploadedFile,
@@ -21,6 +22,7 @@ import type { PayloadToken } from '../common/interfaces/payload-token.interface.
 import { validarImagenOpcional } from '../common/pipes/imagen-opcional.pipe.js';
 import { NormalizarTextoPipe } from '../common/pipes/normalizar-texto.pipe.js';
 import { ParseObjectIdPipe } from '../common/pipes/parse-object-id.pipe.js';
+import { ActualizarPerfilDto } from './dto/actualizar-perfil.dto.js';
 import { AltaUsuarioDto } from './dto/alta-usuario.dto.js';
 import { ListarUsuariosDto } from './dto/listar-usuarios.dto.js';
 import { UsuariosService } from './usuarios.service.js';
@@ -33,6 +35,16 @@ export class UsuariosController {
   @Get('perfil')
   perfil(@UsuarioActual() usuario: PayloadToken) {
     return this.usuariosService.buscarActivo(usuario.sub);
+  }
+
+  @Patch('perfil')
+  @UseInterceptors(FileInterceptor('imagen'))
+  actualizarPerfil(
+    @UsuarioActual() usuario: PayloadToken,
+    @Body() datos: ActualizarPerfilDto,
+    @UploadedFile(validarImagenOpcional()) imagen?: Express.Multer.File,
+  ) {
+    return this.usuariosService.actualizarPerfil(usuario.sub, datos, imagen);
   }
 
   @Get()

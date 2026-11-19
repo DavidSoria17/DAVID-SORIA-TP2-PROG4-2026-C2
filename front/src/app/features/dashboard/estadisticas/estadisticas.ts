@@ -30,25 +30,16 @@ import { CampoFormulario } from '../../../shared/components/campo-formulario/cam
 import { GraficoBarras } from '../../../shared/components/grafico-barras/grafico-barras';
 import { GraficoLineas } from '../../../shared/components/grafico-lineas/grafico-lineas';
 import { GraficoTorta } from '../../../shared/components/grafico-torta/grafico-torta';
-import { Icono } from '../../../shared/components/icono/icono';
 import { PanelGrafico } from '../../../shared/components/panel-grafico/panel-grafico';
 import { Pestanas } from '../../../shared/components/pestanas/pestanas';
 import { FechaMaskDirective } from '../../../shared/directives/fecha-mask/fecha-mask';
 import { EstadisticasService } from '../services/estadisticas.service';
 
-/** Diferencia con el lapso anterior: «▲ 12», «▼ 3» o «= 0». */
-const variacion = (actual: number, anterior: number) => {
-  const diferencia = actual - anterior;
-  if (diferencia === 0) return { texto: '= 0', baja: false };
-  return { texto: `${diferencia > 0 ? '▲' : '▼'} ${Math.abs(diferencia)}`, baja: diferencia < 0 };
-};
-
 /**
  * Dashboard › Estadísticas: para el lapso elegido (con un atajo o con las
- * dos fechas), las cifras del período comparadas con el anterior del mismo
- * largo y tres gráficos: publicaciones por usuario (barras), comentarios por
- * publicación (torta) y comentarios por día (líneas). Cada gráfico se puede
- * ver como tabla.
+ * dos fechas), tres gráficos: publicaciones por usuario (barras), comentarios
+ * por publicación (torta) y comentarios por día (líneas). Cada gráfico se
+ * puede ver como tabla.
  */
 @Component({
   selector: 'app-estadisticas',
@@ -59,7 +50,6 @@ const variacion = (actual: number, anterior: number) => {
     GraficoBarras,
     GraficoLineas,
     GraficoTorta,
-    Icono,
     PanelGrafico,
     Pestanas,
     ReactiveFormsModule,
@@ -88,7 +78,7 @@ export class Estadisticas implements OnInit {
     { validators: [rangoDeFechas('desde', 'hasta')] },
   );
 
-  /** Lapso que muestran las cifras y los gráficos. */
+  /** Lapso que muestran los gráficos. */
   protected readonly rango = signal<RangoFechas>(lapsoRapido(LAPSO_INICIAL, hoyComoFechaIso()));
   protected readonly resumen = signal<ResumenEstadisticas | null>(null);
   protected readonly error = signal<string | null>(null);
@@ -119,7 +109,8 @@ export class Estadisticas implements OnInit {
     return `del ${fechaIsoATexto(desde)} al ${fechaIsoATexto(hasta)}`;
   });
 
-  protected readonly cifras = computed(() => {
+  /** Totales del lapso para los pies de los gráficos, sacados de los mismos datos. */
+  protected readonly totales = computed(() => {
     const resumen = this.resumen();
     if (!resumen) return null;
     const publicaciones = sumar(resumen.publicacionesPorUsuario.map(({ cantidad }) => cantidad));
@@ -128,9 +119,6 @@ export class Estadisticas implements OnInit {
       publicaciones,
       comentarios,
       autores: resumen.publicacionesPorUsuario.length,
-      registrados: resumen.usuariosRegistrados,
-      variacionPublicaciones: variacion(publicaciones, resumen.anterior.publicaciones),
-      variacionComentarios: variacion(comentarios, resumen.anterior.comentarios),
       promedioComentarios: conUnDecimal(comentarios / this.dias()),
     };
   });
@@ -152,7 +140,7 @@ export class Estadisticas implements OnInit {
   /** Comentarios de las publicaciones que no entran en la torta con nombre propio. */
   protected readonly otras = computed<DatoGrafico>(() => ({
     etiqueta: 'Otras publicaciones',
-    valor: (this.cifras()?.comentarios ?? 0) - totalDe(this.porciones()),
+    valor: (this.totales()?.comentarios ?? 0) - totalDe(this.porciones()),
   }));
 
   /** Un punto por día del lapso, con cero en los días sin comentarios. */

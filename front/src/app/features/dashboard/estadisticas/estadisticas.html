@@ -57,40 +57,7 @@
     />
   }
 
-  @if (cifras(); as cifra) {
-    <div class="cifras">
-      <div class="cifra">
-        <span class="cifra__etiqueta">
-          <app-icono nombre="mas" [escala]="1" />
-          Publicaciones
-        </span>
-        <span class="cifra__valor">{{ cifra.publicaciones }}</span>
-        <span class="cifra__delta" [class.cifra__delta--baja]="cifra.variacionPublicaciones.baja">
-          <b>{{ cifra.variacionPublicaciones.texto }}</b>
-          vs. los {{ dias() }} días anteriores
-        </span>
-      </div>
-      <div class="cifra">
-        <span class="cifra__etiqueta">
-          <app-icono nombre="comentario" [escala]="1" />
-          Comentarios
-        </span>
-        <span class="cifra__valor">{{ cifra.comentarios }}</span>
-        <span class="cifra__delta" [class.cifra__delta--baja]="cifra.variacionComentarios.baja">
-          <b>{{ cifra.variacionComentarios.texto }}</b>
-          vs. los {{ dias() }} días anteriores
-        </span>
-      </div>
-      <div class="cifra">
-        <span class="cifra__etiqueta">
-          <app-icono nombre="usuarios" [escala]="1" />
-          Usuarios que publicaron
-        </span>
-        <span class="cifra__valor">{{ cifra.autores }}</span>
-        <span class="cifra__delta">de {{ cifra.registrados }} registrados</span>
-      </div>
-    </div>
-
+  @if (totales(); as total) {
     <div class="graficos">
       <app-panel-grafico
         #panelBarras
@@ -109,8 +76,8 @@
           <div class="panel-estado"><p>No hubo publicaciones en este lapso.</p></div>
         }
         <span pie>
-          {{ cantidadCon(cifra.publicaciones, 'publicación', 'publicaciones') }} de
-          {{ cantidadCon(cifra.autores, 'usuario', 'usuarios') }}
+          {{ cantidadCon(total.publicaciones, 'publicación', 'publicaciones') }} de
+          {{ cantidadCon(total.autores, 'usuario', 'usuarios') }}
         </span>
       </app-panel-grafico>
 
@@ -153,10 +120,10 @@
           [comoTabla]="panelLineas.comoTabla()"
         />
         <span pie>
-          {{ cantidadCon(cifra.comentarios, 'comentario', 'comentarios') }} en
+          {{ cantidadCon(total.comentarios, 'comentario', 'comentarios') }} en
           {{ cantidadCon(dias(), 'día', 'días') }}
         </span>
-        <span pie>promedio: {{ cifra.promedioComentarios }} por día</span>
+        <span pie>promedio: {{ total.promedioComentarios }} por día</span>
       </app-panel-grafico>
     </div>
   }

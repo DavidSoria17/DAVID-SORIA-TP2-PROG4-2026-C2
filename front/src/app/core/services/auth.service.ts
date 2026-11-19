@@ -91,6 +91,15 @@ export class AuthService {
     this.usuarioSesion.set(null);
   }
 
+  /**
+   * Reemplaza los datos del usuario de la sesión (por ejemplo, después de
+   * editar el perfil) sin tocar el token.
+   */
+  guardarUsuario(usuario: Usuario): void {
+    localStorage.setItem(CLAVE_USUARIO, JSON.stringify(usuario));
+    this.usuarioSesion.set(usuario);
+  }
+
   private guardarSesion({ usuario, token }: RespuestaAuth): Usuario {
     this.guardarToken(token);
     this.guardarUsuario(usuario);
@@ -100,11 +109,6 @@ export class AuthService {
   private guardarToken(token: string): void {
     localStorage.setItem(CLAVE_TOKEN, token);
     this.tokenSesion.set(token);
-  }
-
-  private guardarUsuario(usuario: Usuario): void {
-    localStorage.setItem(CLAVE_USUARIO, JSON.stringify(usuario));
-    this.usuarioSesion.set(usuario);
   }
 
   private leerUsuarioGuardado(): Usuario | null {

@@ -66,7 +66,6 @@
               <th scope="col">Correo</th>
               <th scope="col">Perfil</th>
               <th scope="col">Estado</th>
-              <th scope="col" class="numero">Publ.</th>
               <th scope="col"><span class="solo-lectores">Acciones</span></th>
             </tr>
           </thead>
@@ -116,9 +115,6 @@
                       Deshabilitado
                     </span>
                   }
-                </td>
-                <td class="numero" data-etiqueta="Publicaciones">
-                  {{ usuario.cantidadPublicaciones }}
                 </td>
                 <td class="acciones">
                   @if (usuario._id === sesion()?._id) {
